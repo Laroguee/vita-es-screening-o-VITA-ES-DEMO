@@ -7,7 +7,7 @@
 \usepackage[spanish,es-nodecimaldot]{babel}
 \usepackage[margin=2.5cm, top=2.5cm, bottom=2.5cm, headheight=15pt]{geometry}
 
-% Tipografía moderna Sans-Serif (estilo Arial / Calibri de Word)
+% Tipografía moderna Sans-Serif (estilo Arial / Calibri de Microsoft Word)
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
 
@@ -22,7 +22,7 @@
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 
-% Tablas estilo Word
+% Tablas ejecutivas estilo Word
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
@@ -52,17 +52,17 @@
 % ======================================================================================
 % PALETA DE COLORES CORPORATIVOS (MICROSOFT WORD EXECUTIVE & HUAWEI BLUE/RED)
 % ======================================================================================
-\definecolor{wordblue}{RGB}{31, 78, 121}        % Azul ejecutivo oscuro Word (#1F4E79)
-\definecolor{wordsteelblue}{RGB}{46, 117, 182}  % Azul acero subtítulos (#2E75B6)
-\definecolor{worddark}{RGB}{38, 38, 38}         % Texto carbón Word
-\definecolor{tableheader}{RGB}{31, 78, 121}     % Encabezado de tabla azul oscuro
-\definecolor{tablezebra}{RGB}{242, 246, 252}    % Filas alternas gris-azul suave
-\definecolor{boxbg}{RGB}{244, 248, 253}        % Fondo de cajas de texto
-\definecolor{boxborder}{RGB}{180, 205, 235}    % Borde de cajas de texto
+\definecolor{wordblue}{RGB}{31, 78, 121}        % Azul ejecutivo Word (#1F4E79)
+\definecolor{wordsteelblue}{RGB}{46, 117, 182}  % Azul acero subtítulos Word (#2E75B6)
+\definecolor{worddark}{RGB}{38, 38, 38}         % Texto carbón
+\definecolor{tableheader}{RGB}{31, 78, 121}     % Encabezado tabla azul marino
+\definecolor{tablezebra}{RGB}{242, 246, 252}    % Cebreado de tabla gris-azul tenue
+\definecolor{boxbg}{RGB}{244, 248, 253}        % Fondo de callouts
+\definecolor{boxborder}{RGB}{180, 205, 235}    % Borde de callouts
 \definecolor{huaweired}{RGB}{207, 10, 44}       % Rojo corporativo Huawei
-\definecolor{clinicred}{RGB}{220, 38, 38}       % Rojo alerta clínica
-\definecolor{clinicamber}{RGB}{217, 119, 6}     % Ámbar riesgo moderado
-\definecolor{clinicgreen}{RGB}{5, 150, 105}     % Verde bajo riesgo
+\definecolor{clinicred}{RGB}{220, 38, 38}       % Alerta alto riesgo
+\definecolor{clinicamber}{RGB}{217, 119, 6}     % Riesgo moderado
+\definecolor{clinicgreen}{RGB}{5, 150, 105}     % Bajo riesgo fisiológico
 
 % Configuración de Hipervínculos
 \hypersetup{
@@ -71,7 +71,7 @@
     citecolor=wordblue,
     urlcolor=wordsteelblue,
     pdftitle={VITA-ES: Reporte Técnico Ejecutivo},
-    pdfauthor={Proyecto VITA-ES | Huawei ICT Competition 2026-2027}
+    pdfauthor={Marjorie Cabrera & Alejandro Ramos | Proyecto VITA-ES}
 }
 
 % ======================================================================================
@@ -99,14 +99,14 @@
 % ======================================================================================
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{\footnotesize \textcolor{gray}{VITA-ES $\bullet$ Huawei ICT Competition 2026--2027}}
+\rhead{\footnotesize \textcolor{gray}{VITA-ES $\bullet$ StartupSTEM 2026 / Huawei ICT Competition}}
 \lhead{\footnotesize \textcolor{wordblue}{\textbf{Reporte Técnico Ejecutivo: Plataforma VITA-ES}}}
-\lfoot{\footnotesize \textcolor{gray}{Topic 1: Innovative AI Powered by Huawei Cloud}}
+\lfoot{\footnotesize \textcolor{gray}{Topic 1: Innovative AI on Huawei Cloud $\bullet$ SRS El Salvador}}
 \rfoot{\footnotesize \textcolor{worddark}{Página \thepage\ de \pageref{LastPage}}}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-% Estilo de listas compactas Word
+% Listas compactas estilo Word
 \setlist[enumerate]{topsep=2pt, itemsep=2pt, parsep=0pt, leftmargin=1.5em}
 \setlist[itemize]{topsep=2pt, itemsep=2pt, parsep=0pt, leftmargin=1.5em}
 
@@ -128,13 +128,13 @@
 \begin{document}
 
 % ======================================================================================
-% ENCABEZADO PRINCIPAL ESTILO PORTADA EJECUTIVA DE WORD
+% PORTADA EJECUTIVA ESTILO MICROSOFT WORD
 % ======================================================================================
 \begin{tcolorbox}[colback=white, colframe=wordblue, arc=4pt, boxrule=1pt, left=12pt, right=12pt, top=12pt, bottom=12pt]
     \begin{center}
-        {\color{wordblue}\huge \textbf{VITA-ES: Plataforma Inteligente de Tamizaje y Triaje Mamario Oportuno mediante Bioimpedancia y Fusión Multimodal}} \\[0.3cm]
-        {\color{wordsteelblue}\large \textbf{Reporte Técnico Ejecutivo: Fundamentación Biofísica, Model Zoo Clínico y Arquitectura en Huawei Cloud}} \\[0.2cm]
-        {\normalsize \textit{Huawei ICT Competition 2026--2027 $\bullet$ Innovation Track $\bullet$ Topic 1: Innovative AI on Huawei Cloud}}
+        {\color{wordblue}\huge \textbf{VITA-ES: Plataforma Inteligente de Triaje Mamario Oportuno mediante Espectroscopía de Bioimpedancia y Fusión Multimodal}} \\[0.3cm]
+        {\color{wordsteelblue}\large \textbf{Reporte Técnico: Integración del Dispositivo de Adquisición Portátil con el Motor Analítico de IA en el Borde y Huawei Cloud}} \\[0.2cm]
+        {\normalsize \textit{StartupSTEM 2026 $\bullet$ Huawei ICT Competition 2026--2027 (Topic 1: Innovative AI Powered by Huawei Cloud)}}
     \end{center}
     
     \vspace{0.2cm}
@@ -143,16 +143,19 @@
     
     \begin{minipage}[t]{0.48\textwidth}
         \footnotesize
-        \textbf{Equipo de Innovación:} Biomédica \& Cloud AI VITA-ES \\
-        \textbf{Hardware Sonda:} VITA-PRB-0428 (AD5933 + ESP32-S3 BLE) \\
-        \textbf{Edge AI:} MindSpore Lite (Ascend 310, $4.2\text{ ms}$)
+        \textbf{Equipo Fundador:} Marjorie Cabrera \& Alejandro Ramos \\
+        \textbf{Especialidad:} Ingeniería Biomédica (5.º año) \\
+        \textbf{Experiencia Regulatoria:} Superintendencia de Regulación Sanitaria (SRS) de El Salvador (Vigilancia y Tecnovigilancia) \\
+        \textbf{Hardware Clínico:} Sonda VITA-PRB-0428 (\$300 USD) + Parche Descartable (\$0.90 USD)
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.48\textwidth}
         \footnotesize
-        \textbf{Cloud AI:} Huawei ModelArts (Ascend 910 Pro MLOps) \\
-        \textbf{Fecha y Versión:} Octubre 2026 $\bullet$ Versión 2.4.0-Production \\
-        \textbf{Repositorio:} \url{https://github.com/TU_USUARIO/vita-es-screening}
+        \textbf{Edge AI:} MindSpore Lite (Ascend 310, $4.2\text{ ms}$, Offline) \\
+        \textbf{Cloud AI:} Huawei ModelArts (Ascend 910 Pro, MLOps) \\
+        \textbf{Normativa Local:} RTS 11.03.02:21 (Dispositivo Médico Clase II) \\
+        \textbf{Fecha y Versión:} Octubre 2026 $\bullet$ Versión 2.5.0-Executive \\
+        \textbf{Repositorio Oficial:} \url{https://github.com/Laroguee/vita-es-screening-o-VITA-ES-DEMO.git}
     \end{minipage}
 \end{tcolorbox}
 
@@ -161,8 +164,10 @@
 % ======================================================================================
 % RESUMEN EJECUTIVO (WORD CALLOUT BOX)
 % ======================================================================================
-\begin{wordcallout}[title=Resumen Ejecutivo]
-El cáncer de mama es la neoplasia de mayor letalidad en mujeres mundialmente. En países de ingresos medios y bajos, más del 65\% de los casos se diagnostican en fases avanzadas por escasez de mastógrafos y la reducida sensibilidad de la mamografía en mamas densas ($<50\%$). \textbf{VITA-ES} es una solución no ionizante y de bajo costo ($<\$250$ USD) basada en \textbf{Espectroscopía de Bioimpedancia Eléctrica (EIS)} multifrecuencia (15.625~kHz a 1.0~MHz) y \textbf{Fusión Multimodal Bayesiana Tardía} integrando tres cohortes clínicas internacionales (Jossinet, Coimbra BCCD y Wisconsin WDBC). Mediante un \textbf{Model Zoo} de cuatro clasificadores, la plataforma alcanza una \textbf{sensibilidad en carcinoma del 95.24\%} con inferencia ultrarrápida de \textbf{4.2~ms} en aceleradores Huawei Ascend 310 con MindSpore Lite. Incorpora el índice \textbf{CUI (Clinical Uncertainty Index)} basado en Entropía de Shannon para suspender el descarte ante casos atípicos limítrofes y un protocolo de interlock por calidad de señal (SQI). Su infraestructura híbrida integra Huawei ModelArts, DCS Redis y RDS PostgreSQL cifrado con KMS (estándar HIPAA).
+\begin{wordcallout}[title=Resumen Ejecutivo y Declaración de Complementariedad]
+En El Salvador, solo existen \textbf{18 mamógrafos públicos para atender a 3.2 millones de mujeres}, lo que genera listas de espera de más de 6 meses y provoca que los tumores se diagnostiquen tardíamente con un tamaño promedio de \textbf{4.8~cm}. El 40.1\% de las mujeres rurales se encuentra totalmente marginado del tamizaje. \textbf{VITA-ES} resuelve esta crisis mediante un dispositivo portátil de bioimpedancia eléctrica (\$300 USD) de uso comunitario y un parche de contacto bioeléctrico desechable (\$0.90 USD), operado por personal de enfermería en Unidades Comunitarias de Salud Familiar (UCSF). 
+
+El presente reporte establece formalmente cómo la \textbf{plataforma analítica y de software desarrollada en este repositorio complementa la adquisición física de la señal}. Mientras la sonda de hardware inyecta microcorrientes alternas inocuas y digitaliza la respuesta dieléctrica tisular, la plataforma de software actúa como el \textbf{motor de inteligencia clínica, control de calidad y triaje en 6 etapas}: (1) Validación en tiempo real del contacto piel-electrodo mediante el índice SQI (\textit{Signal Quality Index}); (2) Extracción biofísica automatizada de parámetros de dispersión Cole-Cole; (3) Fusión Multimodal Bayesiana Tardía combinando bioimpedancia (70\%), biomarcadores metabólicos (15\%) y hallazgos físicos (15\%); (4) Model Zoo optimizado con XGBoost y VITA-Net 1D en MindSpore Lite (Ascend 310) que alcanza \textbf{95.24\% de sensibilidad en carcinoma con latencia de 4.2~ms}; (5) Cuantificación de incertidumbre diagnóstica mediante el índice CUI para evitar descartes erróneos en casos atípicos; y (6) Sincronización segura con Huawei Cloud (ModelArts, DCS, RDS con cifrado KMS bajo RTS 11.03.04:23) para tecnovigilancia y re-entrenamiento federado continuo.
 \end{wordcallout}
 
 \vspace{0.2cm}
@@ -170,134 +175,219 @@ El cáncer de mama es la neoplasia de mayor letalidad en mujeres mundialmente. E
 \vspace{0.4cm}
 
 % ======================================================================================
-% SECCIÓN 1: INTRODUCCIÓN Y SALUD PÚBLICA
+% SECCIÓN 1: CONTEXTO NACIONAL Y JUSTIFICACIÓN
 % ======================================================================================
-\section{Generalidades del Proyecto y Justificación de Salud Pública}
+\section{El Problema de Salud Pública y Justificación en El Salvador}
 
-\subsection{El Desafío Global del Cáncer de Mama}
-Según datos de la Organización Mundial de la Salud (OMS) y la Agencia Internacional para la Investigación del Cáncer (IARC), el cáncer de mama genera más de 2.3 millones de nuevos casos y 685,000 muertes anuales. La tasa de supervivencia a 5 años supera el 99\% cuando se detecta en Estadio I, pero desciende abruptamente por debajo del 28\% en Estadio IV metastásico.
-
-En América Latina y áreas periféricas, el tamizaje oportuno enfrenta serias limitaciones:
+\subsection{La Realidad del Cáncer de Mama en El Salvador}
+El cáncer de mama es la principal causa de morbilidad y mortalidad oncológica femenina en El Salvador. A pesar de que la supervivencia a cinco años supera el 99\% si la lesión es detectada en Estadio I, el sistema de salud salvadoreño enfrenta un colapso estructural:
 \begin{enumerate}
-    \item \textbf{Elevado Costo de Equipamiento:} Un mastógrafo digital con tomosíntesis cuesta entre \$150,000 y \$350,000 USD, requiriendo salas blindadas y radiólogos especialistas con escasa disponibilidad en zonas no metropolitanas.
-    \item \textbf{La Limitante de la Mama Densa:} Entre el 40\% y 50\% de las mujeres menores de 50 años presentan tejido mamario glandular denso (Categorías C y D de ACR). En este grupo, la mamografía convencional pierde sensibilidad hasta un \textbf{48--52\%} debido al enmascaramiento radiológico tisular.
-    \item \textbf{Saturación del Tercer Nivel:} La ausencia de herramientas de triaje objetivo en atención primaria produce tiempos de espera de 3 a 6 meses para mamografías diagnósticas y biopsias innecesarias de lesiones benignas como fibroadenomas o mastopatías.
+    \item \textbf{Déficit Crítico de Infraestructura:} En la red pública del Ministerio de Salud (MINSAL) y el Instituto Salvadoreño del Seguro Social (ISSS) operan únicamente \textbf{18 mamógrafos funcionales} para una población objetivo de \textbf{3.2 millones de mujeres} (1.6 millones en el grupo de tamizaje prioritario de 30 a 59 años).
+    \item \textbf{Tiempos de Espera Inaceptables:} La saturación de los centros de tercer nivel (Hospital Nacional de la Mujer y Hospital Oncológico) genera listas de espera de \textbf{6 meses o más} para una mamografía diagnóstica.
+    \item \textbf{Diagnóstico en Fases Avanzadas:} A causa de la demora, el tumor se diagnostica cuando ya mide en promedio \textbf{4.8~cm} de diámetro, reduciendo drásticamente la probabilidad de curación e incrementando el costo de tratamientos paliativos.
+    \item \textbf{Exclusión Rural Sistemática:} El \textbf{40.1\% de las mujeres en áreas rurales} carecen por completo de acceso físico o económico al tamizaje mamográfico.
 \end{enumerate}
 
-\subsection{Propuesta de Valor de VITA-ES}
-VITA-ES (\textit{Vital Impedance Tomography \& Assessment - Early Screening}) propone una alternativa complementaria no ionizante, libre de radiación, indolora y de bajo costo ($<\$250$ USD por sonda portátil) orientada a centros de salud comunitarios y brigadas médicas móviles. VITA-ES no pretende reemplazar la biopsia con aguja gruesa (BAG), sino actuar como un \textbf{filtro inteligente de alta sensibilidad (95.2\%)} que estratifica a las pacientes en tres niveles de riesgo homólogos al estándar internacional BI-RADS (1 a 5), priorizando la atención oncológica urgente y descongestionando los hospitales.
+\subsection{Estrategia VITA-ES: Descentralización Comunitaria Permanente}
+A diferencia de iniciativas de brigadas itinerantes ocasionales que dejan a las comunidades desatendidas tras su partida, VITA-ES establece un \textbf{modelo de adopción permanente en el primer nivel de atención}:
+\begin{itemize}
+    \item \textbf{El Dispositivo se Queda en la Clínica:} Se instalan equipos permanentes en las 750 Unidades Comunitarias de Salud Familiar (UCSF/ISSS) y en 1,200 clínicas rurales y jornadas de ONGs.
+    \item \textbf{Capacitación Rápida:} Se capacita en solo \textbf{20 minutos} al personal local (enfermería y promotores de salud) para operar el sistema.
+    \item \textbf{Resultados Inmediatos:} Triaje completo, indoloro y sin radiación ionizante con dictamen clínico en \textbf{5 minutos}.
+\end{itemize}
+
+% --- CUADRO 1: COMPARATIVA DE ALTERNATIVAS (EXTRAÍDA DE LA DIAPOSITIVA 7) ---
+\begin{table}[H]
+\centering
+\small
+\caption{Matriz comparativa de tecnologías de detección mamaria (Fuente: StartupSTEM 2026).}
+\label{tab:comparativa}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{p{2.8cm} p{3.2cm} p{3.0cm} p{5.0cm}}
+\rowcolor{tableheader}
+\textcolor{white}{\textbf{Criterio}} & \textcolor{white}{\textbf{Mamografía Digital}} & \textcolor{white}{\textbf{Autoexploración}} & \textcolor{white}{\textbf{Solución VITA-ES}} \\
+\toprule
+\textbf{Costo por Prueba} & $\sim$\$50.00 USD (Inaccesible) & Gratuita & \textbf{\$5.00 USD comercial / \$0.00 para la paciente} \\
+\rowcolor{tablezebra}
+\textbf{Ubicación de Acceso} & Hospitales en ciudades & En el hogar & \textbf{En la comunidad rural (Portátil)} \\
+\textbf{Operador} & Médico Radiólogo escaso & La propia paciente & \textbf{Enfermería / Personal de salud local} \\
+\rowcolor{tablezebra}
+\textbf{Efectividad Clínica} & Alta, pero tardía por colapso & Muy baja sensibilidad & \textbf{Alta sensibilidad: detecta cambios no palpables} \\
+\textbf{Tipo de Dictamen} & Diagnóstico final por imagen & Subjetivo y tardío & \textbf{Triaje rápido, objetivo, indoloro y no ionizante} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Modelo de Negocio y Sostenibilidad Financiera}
+El modelo de negocio está diseñado para no trasladar ningún costo a la usuaria:
+\begin{itemize}
+    \item \textbf{Costo para la Paciente:} \textbf{\$0.00 USD (100\% Gratuito en la UCSF)}.
+    \item \textbf{Contratación Centralizada:} El MINSAL y organizaciones no gubernamentales adquieren paquetes masivos de tamizaje preventivo a un precio institucional de \$3.50 USD por prueba.
+    \item \textbf{Estructura de Costos del Dispositivo:} Costo de fabricación del hardware: \textbf{\$300.00 USD}. Costo del parche de electrodos biocompatibles descartable: \textbf{\$0.90 USD}.
+    \item \textbf{Margen y Retorno de Inversión (ROI):} Margen neto de \textbf{\$2.60 USD por prueba}. El punto de equilibrio se alcanza a las \textbf{116 pruebas por equipo} (atendiendo a 3 pacientes diarias, el ROI se completa en apenas \textbf{1.3 meses}).
+\end{itemize}
 
 % ======================================================================================
-% SECCIÓN 2: FUNDAMENTACIÓN BIOFÍSICA
+% SECCIÓN 2: COMPLEMENTARIEDAD HARDWARE - SOFTWARE
+% ======================================================================================
+\section{Complementariedad entre la Sonda de Adquisición y la Plataforma de Software}
+
+\subsection{La Necesidad del Eslabón Analítico}
+La sonda física VITA-PRB-0428 integra un generador analógico de impedancias multifrecuencia (Analog Devices AD5933) conectado a un parche desechable con electrodos concéntricos en acero quirúrgico 316L. Sin embargo, **la adquisición de hardware por sí sola es ciega desde la perspectiva clínica**:
+\begin{itemize}
+    \item El sensor físico únicamente adquiere números complejos en forma de parte real e imaginaria de corriente y voltaje: $Z(f) = Z'(f) + j Z''(f)$.
+    \item Una enfermera comunitaria en una UCSF rural no puede diagnosticar una lesión mamaria a partir de una tabla cruda de ohmios y nanofaradios.
+    \item Errores de colocación física (piel deshidratada o cortocircuitos por exceso de gel) generarían diagnósticos falsos positivos o falsos negativos si no existe una capa digital que supervise la integridad de la señal.
+\end{itemize}
+
+Por consiguiente, la plataforma de software alojada en este repositorio actúa como el **cerebro complementario que transforma una medición bioeléctrica cruda en una decisión clínica segura y accionable**.
+
+% --- FIGURA 1: ARQUITECTURA DE COMPLEMENTARIEDAD (TIKZ RESIZED) ---
+\begin{figure}[H]
+\centering
+\resizebox{0.95\linewidth}{!}{
+\begin{tikzpicture}[
+    node distance=0.85cm,
+    hw_box/.style={rectangle, draw=wordblue, fill=wordblue!8, rounded corners=3pt, text centered, font=\small, minimum height=1.1cm},
+    sw_box/.style={rectangle, draw=wordsteelblue, fill=boxbg, rounded corners=3pt, text centered, font=\small, minimum height=1.1cm},
+    cloud_box/.style={rectangle, draw=huaweired, fill=huaweired!8, rounded corners=3pt, text centered, font=\small, minimum height=1.1cm},
+    arrow/.style={-{Latex[length=2.5mm]}, thick, worddark}
+]
+    % FILA 1: ADQUISICIÓN FÍSICA
+    \node (p1) [hw_box, text width=4.5cm] {\textbf{1. Adquisición Física} \\ Parche Descartable (\$0.90) \\ 7 Frecuencias (15 kHz--1 MHz)};
+    \node (p2) [hw_box, right=0.9cm of p1, text width=4.5cm] {\textbf{2. Sonda VITA-PRB-0428} \\ AD5933 + ESP32-S3 BLE \\ Medición $Z(\omega) = Z' + jZ''$};
+    \node (p3) [hw_box, right=0.9cm of p2, text width=4.5cm] {\textbf{3. Trama Digital Cruda} \\ Tramas binarias BLE 5.0 \\ Envío a la Estación Clínica};
+
+    % FILA 2: PLATAFORMA DE SOFTWARE (ESTE REPOSITORIO)
+    \node (s1) [sw_box, below=1.0cm of p1, text width=4.5cm] {\textbf{4. Interlock de Calidad (SQI)} \\ Validación contacto y piel seca \\ Filtro de ruido ($SNR > 14\text{ dB}$)};
+    \node (s2) [sw_box, below=1.0cm of p2, text width=4.5cm] {\textbf{5. Motor Cole-Cole} \\ Extracción de 9 descriptores \\ Curvas Nyquist calibradas};
+    \node (s3) [sw_box, below=1.0cm of p3, text width=4.5cm] {\textbf{6. Fusión Multimodal Tardía} \\ Bioimpedancia 70\% \\ Coimbra 15\% + WDBC 15\%};
+
+    % FILA 3: DECISIÓN CLÍNICA Y NUBE
+    \node (d1) [sw_box, below=1.0cm of s1, text width=4.5cm] {\textbf{7. Edge AI (Ascend 310)} \\ MindSpore Lite (4.2 ms) \\ Sensibilidad 95.24\% en Cáncer};
+    \node (d2) [sw_box, below=1.0cm of s2, text width=4.5cm] {\textbf{8. Índice CUI (Incertidumbre)} \\ Entropía Shannon Normalizada \\ Bloquea descartes erróneos};
+    \node (c1) [cloud_box, below=1.0cm of s3, text width=4.5cm] {\textbf{9. Huawei Cloud Suite} \\ ModelArts MLOps + RDS KMS \\ Tecnovigilancia RTS 11.03.04};
+
+    % Conexiones
+    \draw [arrow] (p1) -- (p2);
+    \draw [arrow] (p2) -- (p3);
+    \draw [arrow] (p3) -- (s1);
+    \draw [arrow] (s1) -- (s2);
+    \draw [arrow] (s2) -- (s3);
+    \draw [arrow] (s3) -- (d1);
+    \draw [arrow] (d1) -- (d2);
+    \draw [arrow] (d2) -- (c1);
+
+    % Agrupaciones visuales
+    \begin{scope}[on background layer]
+        \node [draw=wordblue, fill=wordblue!2, fit=(p1)(p2)(p3), inner sep=0.2cm, rounded corners=4pt, label={[wordblue, font=\bfseries]above:CAPA 1: ADQUISICIÓN DE HARDWARE (SONDA PORTÁTIL EN CLÍNICA)}] {};
+        \node [draw=wordsteelblue, fill=wordsteelblue!2, fit=(s1)(s2)(s3)(d1)(d2), inner sep=0.2cm, rounded corners=4pt, label={[wordsteelblue, font=\bfseries]left:\rotatebox{90}{\textbf{PLATAFORMA VITA-ES}}}] {};
+        \node [draw=huaweired, fill=huaweired!2, fit=(c1), inner sep=0.2cm, rounded corners=4pt, label={[huaweired, font=\bfseries]below:CAPA 3: HUAWEI CLOUD}] {};
+    \end{scope}
+
+\end{tikzpicture}
+}
+\caption{Cadena de valor técnico-clínica de VITA-ES: Articulación entre la adquisición de señales de hardware, la plataforma de inteligencia en el borde y la gobernanza en Huawei Cloud.}
+\label{fig:pipeline_completo}
+\end{figure}
+
+\subsection{Las 6 Funciones Complementarias de la Plataforma de Software}
+\begin{enumerate}
+    \item \textbf{Supervisión de Calidad en Vivo (Signal Quality Index - SQI):} Evalúa de forma no invasiva si los electrodos del parche tienen la adherencia y humedad adecuada sobre la piel de la paciente. Si la resistencia de contacto es excesiva ($R_0 > 4,200\ \Omega$) o se produce un puente de gel ($Z' < 50\ \Omega$), el software bloquea la prueba y le muestra a la enfermera instrucciones claras de colocación.
+    \item \textbf{Extracción Analítica de Parámetros de Cole-Cole:} Modela matemáticamente el comportamiento interfacial celular $\beta$ y proyecta los descriptores biomédicos invariantes ($I_0, DR, \text{Max IP}, \text{Area}$) sin requerir intervención del operador.
+    \item \textbf{Fusión Multimodal Tardía (Enfoque Holístico):} La sonda adquiere el estado biofísico local (70\%), pero la plataforma permite que la enfermera ingrese datos metabólicos (perfil glucémico de Coimbra, 15\%) y antecedentes de masa palpable (Wisconsin WDBC, 15\%), evitando falsos diagnósticos basados en una sola fuente de datos.
+    \item \textbf{Inferencia Edge Ultrarrápida sin Conexión (Offline Ready):} Gracias a la optimización de los modelos en MindSpore Lite para chips Huawei Ascend 310, el triaje se realiza de manera local en \textbf{4.2~ms}, garantizando operatividad en cantones rurales sin señal de internet ni telefonía móvil.
+    \item \textbf{Cuantificación de Incertidumbre Médica (CUI):} Calcula la Entropía Normalizada de Shannon en las predicciones. Si el tejido arroja características limítrofes (p. ej. atipia celular en fibroadenomas hipercelulares), el sistema suspende el descarte y emite una orden de confirmación ecográfica o biopsia.
+    \item \textbf{Gobernanza y Tecnovigilancia en Huawei Cloud:} Sincroniza los expedientes clínicos en bases de datos PostgreSQL RDS cifradas con KMS AES-256 (cumplimiento HIPAA y GDPR), reportando eventos adversos conforme al **RTS 11.03.04:23** y permitiendo re-entrenar los modelos con datos salvadoreños mediante aprendizaje federado en Huawei ModelArts.
+\end{enumerate}
+
+% ======================================================================================
+% SECCIÓN 3: FUNDAMENTACIÓN BIOFÍSICA
 % ======================================================================================
 \section{Fundamentación Biofísica y Modelo de Cole-Cole}
 
-\subsection{Propiedades Dieléctricas de los Tejidos Mamarios}
-La patogénesis oncológica induce transformaciones profundas en la biofísica del tejido:
+\subsection{Comportamiento Dieléctrico Tisular}
+La carcinogénesis mamaria altera profundamente la microarquitectura celular, lo que permite diferenciar tejidos mediante corrientes alternas seguras ($I_{\text{RMS}} < 50\ \mu\text{A}$):
 \begin{itemize}
-    \item \textbf{Tejido Graso Adiposo Normal:} Formado por adipocitos con vacuolas lipídicas hidrófobas altamente dieléctricas. Exhibe resistencia extracelular elevada ($R_0 > 2,000\ \Omega$).
-    \item \textbf{Tejido Glandular Normal y Lesiones Benignas:} Membranas celulares intactas con capacitancia interfacial estándar y resistencia moderada ($R_0 \approx 230 - 290\ \Omega$).
-    \item \textbf{Carcinoma Mamario Maligno:} Proliferación tumoral anárquica, alta densidad nuclear, aumento del agua intracelular y extracelular, pérdida de uniones intercelulares estrechas y neovascularización fenestrada. Provoca una disminución característica de la resistencia a baja frecuencia ($R_0 \approx 394\ \Omega$) y un marcado aumento en la dispersión interfacial ($\Delta R = R_0 - R_\infty$).
+    \item \textbf{Tejido Graso Adiposo Normal:} Células rellenas de lípidos no conductores. Presenta una resistencia extracelular masiva ($R_0 > 2,000\ \Omega$).
+    \item \textbf{Tejido Glandular Normal y Lesiones Benignas:} Membranas celulares intactas con capacitancia estándar y resistencia intermedia ($R_0 \approx 230 - 290\ \Omega$).
+    \item \textbf{Carcinoma Mamario Maligno:} Proliferación descontrolada con alta densidad celular, atipia nuclear, permeabilidad de membrana elevada, pérdida de uniones estrechas e incremento del agua intra y extracelular. Esto se traduce en una drástica reducción de la resistencia a baja frecuencia ($R_0 \approx 394\ \Omega$) y un marcado aumento en la dispersión $\Delta R$.
 \end{itemize}
 
-\subsection{Formulación Analítica de Cole-Cole}
-Bajo estimulación por corriente alterna a microamperajes seguros ($I_{\text{RMS}} < 50\ \mu\text{A}$), la impedancia celular compleja $Z(\omega)$ sigue la formulación de Cole \& Cole \cite{cole1941}:
+\subsection{Ecuación Clásica de Cole-Cole y Reactancia Pico (Max IP)}
+La impedancia celular compleja $Z(\omega)$ responde a la ecuación analítica formulada por Cole \& Cole \cite{cole1941}:
 
 \begin{equation}
     Z(\omega) = R_\infty + \frac{R_0 - R_\infty}{1 + (j \omega \tau)^\alpha}
     \label{eq:cole}
 \end{equation}
 
-Donde $\omega = 2\pi f$ es la frecuencia angular; $R_0$ es la resistencia a frecuencia cero ($f \to 0$); $R_\infty$ es la resistencia a frecuencia infinita; $\Delta R = R_0 - R_\infty$ es la amplitud de dispersión de bioimpedancia; $\tau$ es la constante de relajación $\beta$ asociada a la frecuencia de corte $f_c = \frac{1}{2\pi\tau}$ (150~kHz a 800~kHz); y $\alpha \in (0, 1]$ es el coeficiente de distribución de dispersión tisular.
-
-\subsection{Identidad Matemática del Pico Reactivo (Max IP)}
-En el diagrama de Nyquist ($Z'$ vs $-Z''$), el espectro describe un arco circular deprimido por un ángulo $\theta = (1-\alpha)\frac{\pi}{2}$. En la frecuencia de relajación $\omega_c = 1/\tau$, la reactancia capacitiva máxima ($-Z''_{\max}$, catalogada clínicamente como \textbf{Max IP}) responde a la deducción exacta:
+En la frecuencia de relajación celular $\omega_c = 1/\tau$, la reactancia capacitiva máxima ($-Z''_{\max}$, catalogada clínicamente como \textbf{Max IP}) responde a la deducción exacta:
 
 \begin{equation}
     -Z''_{\max} = \frac{R_0 - R_\infty}{2} \tan\left(\frac{\alpha \pi}{4}\right)
     \label{eq:max_ip}
 \end{equation}
 
-\subsection{Vector Canónico de Características Biofísicas}
-A partir del barrido espectral en 7 frecuencias estándar descritas por Jossinet \cite{jossinet1996, uci_breast_tissue, kaggle_breast_tissue} (15.625~kHz a 1.0~MHz), el motor de procesamiento extrae un vector canónico normalizado $\mathbf{x} \in \mathbb{R}^9$:
+A partir de las 7 frecuencias estándar de Jossinet \cite{jossinet1996, uci_breast_tissue, kaggle_breast_tissue} (15.625~kHz a 1.0~MHz), el motor de procesamiento extrae el vector canónico $\mathbf{x} \in \mathbb{R}^9$:
 
 \begin{equation}
     \mathbf{x} = \Big[ I_0,\; \text{PA500},\; \text{HFS},\; \text{DA},\; \text{Area},\; \text{A/DA},\; \text{Max IP},\; \text{DR},\; P \Big]^T
-    \label{eq:feature_vector}
+    \label{eq:vector_x}
 \end{equation}
 
-\begin{enumerate}
-    \item $I_0$: Resistencia extrapolada a corriente continua (impedividad tisular en $\Omega$).
-    \item $\text{PA500}$: Ángulo de fase $\theta$ en radianes a $500\text{ kHz}$ ($\text{PA500} = \arctan(-Z''/Z')$).
-    \item $\text{HFS}$: Pendiente de alta frecuencia del ángulo de fase entre $500\text{ kHz}$ y $1.0\text{ MHz}$.
-    \item $\text{DA}$: Distancia euclídea entre extremos de impedancia ($15.6\text{ kHz}$ y $1.0\text{ MHz}$).
-    \item $\text{Area}$: Integral trapezoidal del semicírculo espectral ($\Omega^2$).
-    \item $\text{A/DA}$: Razón de área espectral sobre distancia (excentricidad del arco).
-    \item $\text{Max IP}$: Magnitud pico de la reactancia capacitiva tisular en $\Omega$.
-    \item $\text{DR}$: Rango total de dispersión resistiva $R_0 - \text{Re}(Z(1\text{ MHz}))$.
-    \item $P$: Longitud total de la trayectoria del espectro en el plano complejo.
-\end{enumerate}
-
-% --- FIGURA 1: DIAGRAMA COLE-COLE EN TIKZ (AJUSTADO PARA NO DESBORDAR) ---
+% --- FIGURA 2: DIAGRAMA COLE-COLE EN TIKZ (AJUSTADO PARA NO DESBORDAR) ---
 \begin{figure}[H]
 \centering
-\resizebox{0.85\linewidth}{!}{
+\resizebox{0.82\linewidth}{!}{
 \begin{tikzpicture}[scale=1.0]
-    % Ejes cartesianos
-    \draw[->, thick, worddark] (0,0) -- (9.2,0) node[right, font=\small\bfseries] {Resistencia Real $Z'$ ($\Omega$)};
-    \draw[->, thick, worddark] (0,0) -- (0,4.6) node[above, font=\small\bfseries] {Reactancia Capacitiva $-Z''$ ($\Omega$)};
+    \draw[->, thick, worddark] (0,0) -- (9.0,0) node[right, font=\small\bfseries] {Resistencia Real $Z'$ ($\Omega$)};
+    \draw[->, thick, worddark] (0,0) -- (0,4.5) node[above, font=\small\bfseries] {Reactancia Capacitiva $-Z''$ ($\Omega$)};
 
-    % Parámetros geométricos del arco Cole-Cole
-    \def\xc{4.7}
+    \def\xc{4.6}
     \def\yc{-0.8}
     \def\rad{3.8}
 
-    % Arco semicircular
     \draw[very thick, wordblue, domain=35:145, samples=100] 
         plot ({\xc + \rad*cos(\x)}, {\yc + \rad*sin(\x)});
 
-    % Puntos singulares
     \filldraw[wordblue] ({\xc + \rad*cos(35)}, {\yc + \rad*sin(35)}) circle (2.5pt) node[below right, font=\footnotesize] {$R_\infty$ ($f \to \infty$)};
     \filldraw[wordblue] ({\xc + \rad*cos(145)}, {\yc + \rad*sin(145)}) circle (2.5pt) node[below left, font=\footnotesize] {$R_0 = I_0$ ($f \to 0$)};
     
-    % Ápice Max IP
     \filldraw[clinicred] ({\xc}, {\yc + \rad}) circle (3pt) node[above, font=\footnotesize\bfseries] {$-Z''_{\max} = \text{Max IP}$ ($f_c = \frac{1}{2\pi\tau}$)};
     \draw[dashed, gray] ({\xc}, 0) -- ({\xc}, {\yc + \rad});
     \draw[dashed, gray] (0, {\yc + \rad}) -- ({\xc}, {\yc + \rad});
 
-    % Indicador Delta R
     \draw[<->, thick, worddark] ({\xc + \rad*cos(145)}, -0.4) -- ({\xc + \rad*cos(35)}, -0.4) 
         node[midway, below, font=\footnotesize\bfseries] {$\Delta R = \text{DR} = R_0 - R_\infty$};
 
-    % Ángulo de dispersión
     \draw[dashed, gray] (\xc, \yc) -- (\xc+2, \yc);
     \draw[dashed, gray] (\xc, \yc) -- ({\xc + \rad*cos(35)}, {\yc + \rad*sin(35)});
     \draw[wordsteelblue, thick] (\xc+1, \yc) arc (0:35:1);
     \node[wordsteelblue, font=\footnotesize] at (\xc+1.5, \yc+0.3) {$\alpha\frac{\pi}{2}$};
 
-    % Área bajo la curva
     \fill[wordsteelblue!12, domain=35:145, samples=60] 
         plot ({\xc + \rad*cos(\x)}, {\yc + \rad*sin(\x)}) -- ({\xc + \rad*cos(35)},0) -- ({\xc + \rad*cos(145)},0) -- cycle;
     \node[wordblue, font=\small\bfseries] at (\xc, 1.2) {Área Espectral ($\text{Area} \propto \Delta R^2$)};
 \end{tikzpicture}
 }
-\caption{Diagrama de Nyquist de Cole-Cole: Representación vectorial de los parámetros bioeléctricos de dispersión $\beta$ extraídos por la sonda VITA-PRB-0428.}
+\caption{Diagrama de Nyquist de Cole-Cole: Representación de los parámetros bioeléctricos extraídos por la plataforma a partir de la señal adquirida por la sonda VITA-PRB-0428.}
 \label{fig:cole_cole}
 \end{figure}
 
 % ======================================================================================
-% SECCIÓN 3: DATASETS CLÍNICOS Y FUSIÓN MULTIMODAL
+% SECCIÓN 4: DATASETS CLÍNICOS Y FUSIÓN MULTIMODAL
 % ======================================================================================
-\section{Datasets Clínicos y Fusión Multimodal Bayesiana}
+\section{Datasets Clínicos Internacionales y Fusión Multimodal Bayesiana}
 
-\subsection{Las Tres Fuentes de Datos de Referencia y Enlaces Oficiales}
-En estricto apego a las buenas prácticas de ciencia de datos biomédicos, \textbf{los tres datasets no son concatenados horizontalmente en una sola tabla}, pues provienen de cohortes de pacientes independientes de Francia, Portugal y EE. UU. Unirlos fila a fila introduciría artefactos estadísticos y fuga de datos. En su lugar, se implementa una \textbf{Fusión Multimodal Tardía (Late Bayesian Fusion)}, donde cada modelo procesa su correspondiente dimensión clínica (Cuadro~\ref{tab:datasets}).
+\subsection{Los Tres Datasets de Referencia con Enlaces de Descarga}
+En estricto apego a las directrices de ciencia de datos médicos, \textbf{los tres datasets no son combinados en una sola tabla plana}, pues corresponden a cohortes hospitalarias diferentes de Francia, Portugal y EE. UU. (Cuadro~\ref{tab:datasets}).
 
-% --- CUADRO 1: DATASETS ESTILO TABLA WORD (AJUSTADA A ANCHO COMPLETO) ---
+% --- CUADRO 2: DATASETS CLÍNICOS CON ENLACES (AJUSTADA A PÁGINA) ---
 \begin{table}[H]
 \centering
 \small
-\caption{Características de los tres datasets clínicos internacionales integrados en la plataforma VITA-ES.}
+\caption{Características de los tres datasets clínicos integrados en la plataforma VITA-ES.}
 \label{tab:datasets}
 \renewcommand{\arraystretch}{1.28}
 \begin{tabularx}{\textwidth}{p{2.6cm} p{3.2cm} c p{4.3cm} c}
@@ -312,10 +402,10 @@ En estricto apego a las buenas prácticas de ciencia de datos biomédicos, \text
 \end{tabularx}
 \end{table}
 
-\subsection{Parámetros Empíricos Derivados de la Cohorte Jossinet}
-A partir del análisis directo de los 106 registros de biopsia confirmada de \texttt{breast\_tissue.csv}, se calibraron las distribuciones empíricas ($\mu \pm \sigma$) utilizadas en la simulación y diagnóstico (Cuadro~\ref{tab:empirical_stats}).
+\subsection{Parámetros Empíricos Centrales de la Cohorte Jossinet}
+A partir del análisis directo de los 106 registros de biopsia confirmada de \texttt{breast\_tissue.csv}, se calibraron las distribuciones empíricas ($\mu \pm \sigma$) utilizadas en el motor de inferencia (Cuadro~\ref{tab:empirical_stats}).
 
-% --- CUADRO 2: PARÁMETROS EMPÍRICOS (AJUSTADA CON RESIZEBOX) ---
+% --- CUADRO 3: PARÁMETROS EMPÍRICOS (AJUSTADA CON RESIZEBOX) ---
 \begin{table}[H]
 \centering
 \small
@@ -342,17 +432,17 @@ A partir del análisis directo de los 106 registros de biopsia confirmada de \te
 \end{table}
 
 \subsection{Ecuación de Fusión Multimodal Bayesiana}
-La probabilidad unificada de malignidad ($P_{\text{Fused}}$) sintetiza los tres canales de evidencia clínica:
+La probabilidad combinada de malignidad ($P_{\text{Fused}}$) sintetiza los tres canales de evidencia:
 
 \begin{equation}
     P_{\text{Fused}} = 0.70 \cdot P_{\text{car}}(\text{EIS}) + 0.15 \cdot P_{\text{Metabólico}}(\text{Coimbra}) + 0.15 \cdot P_{\text{Morfológico}}(\text{WDBC})
     \label{eq:fused}
 \end{equation}
 
-% --- FIGURA 2: FLUJO DE FUSIÓN MULTIMODAL EN TIKZ (RESIZED) ---
+% --- FIGURA 3: FLUJO DE FUSIÓN MULTIMODAL EN TIKZ (RESIZED) ---
 \begin{figure}[H]
 \centering
-\resizebox{0.92\linewidth}{!}{
+\resizebox{0.90\linewidth}{!}{
 \begin{tikzpicture}[
     node distance=1.1cm,
     box/.style={rectangle, draw=wordblue, fill=boxbg, rounded corners=3pt, text centered, font=\small, minimum height=1.0cm},
@@ -361,20 +451,16 @@ La probabilidad unificada de malignidad ($P_{\text{Fused}}$) sintetiza los tres 
     triage/.style={rectangle, draw=clinicred, fill=clinicred!8, rounded corners=4pt, text centered, font=\small\bfseries, minimum height=1.2cm},
     arrow/.style={-{Latex[length=2.5mm]}, thick, worddark}
 ]
-    % Entradas clínicas
     \node (in_eis) [box, text width=3.8cm] {\textbf{Sonda VITA-PRB-0428} \\ Barrido EIS (15 kHz--1 MHz)};
     \node (in_coim) [box, right=0.7cm of in_eis, text width=3.8cm] {\textbf{Perfil Metabólico} \\ Glucosa, Insulina, HOMA, IMC};
     \node (in_wdbc) [box, right=0.7cm of in_coim, text width=3.8cm] {\textbf{Hallazgo Palpatorio} \\ Presencia de Nódulo / Atipia};
 
-    % Modelos de inferencia
     \node (m_eis) [box_model, below=0.8cm of in_eis, text width=3.8cm] {\textbf{Model Zoo EIS} \\ XGBoost / VITA-Net 1D \\ $P_{\text{car}}$ ($w_1 = 0.70$)};
     \node (m_coim) [box_model, below=0.8cm of in_coim, text width=3.8cm] {\textbf{Modelo Coimbra} \\ Random Forest Calibrado \\ $P_{\text{Met}}$ ($w_2 = 0.15$)};
     \node (m_wdbc) [box_model, below=0.8cm of in_wdbc, text width=3.8cm] {\textbf{Modelo Morfológico} \\ Regresión Logística WDBC \\ $P_{\text{Morf}}$ ($w_3 = 0.15$)};
 
-    % Nodo de Fusión
     \node (fuse) [fusion, below=0.9cm of m_coim, text width=6.5cm] {\textbf{Fusión Bayesiana Tardía} \\ $P_{\text{Fused}} = 0.70 P_{\text{car}} + 0.15 P_{\text{Met}} + 0.15 P_{\text{Morf}}$};
 
-    % Dictamen de Triaje
     \node (triage_res) [triage, below=0.8cm of fuse, text width=11.0cm] {
         \textbf{Dictamen Clínico de Triaje VITA-ES} \\
         \footnotesize $\bullet$ $P_{\text{Fused}} \ge 32\%$ $\to$ \textbf{ALTO RIESGO (BI-RADS 4/5)} | Derivación Biopsia Urgente ($<7$ días) \\
@@ -382,7 +468,6 @@ La probabilidad unificada de malignidad ($P_{\text{Fused}}$) sintetiza los tres 
         \footnotesize $\bullet$ Fisiológico $\to$ \textbf{BAJO RIESGO (BI-RADS 1/2)} | Control Anual Preventivo
     };
 
-    % Conexiones
     \draw [arrow] (in_eis) -- (m_eis);
     \draw [arrow] (in_coim) -- (m_coim);
     \draw [arrow] (in_wdbc) -- (m_wdbc);
@@ -398,14 +483,14 @@ La probabilidad unificada de malignidad ($P_{\text{Fused}}$) sintetiza los tres 
 \end{figure}
 
 % ======================================================================================
-% SECCIÓN 4: MODEL ZOO E INCERTIDUMBRE
+% SECCIÓN 5: MODEL ZOO E INCERTIDUMBRE
 % ======================================================================================
 \section{Model Zoo Clínico y Cuantificación de Incertidumbre (CUI)}
 
 \subsection{Benchmarking de los Clasificadores (Stratified $k=5$)}
-Se implementó un Model Zoo comparativo para equilibrar sensibilidad oncológica y latencia (Cuadro~\ref{tab:model_zoo}). En medicina preventiva de tamizaje, la métrica crítica es la \textbf{Sensibilidad en Carcinoma} (minimización estricta de falsos negativos).
+Se implementó un Model Zoo comparativo para equilibrar sensibilidad y latencia (Cuadro~\ref{tab:model_zoo}). En medicina preventiva de tamizaje, la métrica crítica es la \textbf{Sensibilidad en Carcinoma} (minimización estricta de falsos negativos).
 
-% --- CUADRO 3: MODEL ZOO (AJUSTADO CON RESIZEBOX PARA EVITAR DESBORDAMIENTO) ---
+% --- CUADRO 4: MODEL ZOO (AJUSTADO CON RESIZEBOX PARA EVITAR DESBORDAMIENTO) ---
 \begin{table}[H]
 \centering
 \small
@@ -440,7 +525,6 @@ Para prevenir fallos catastróficos por sobreconfianza ante atipias biológicas 
     \label{eq:cui}
 \end{equation}
 
-Donde $H_{\text{norm}} \in [0, 1]$ es la Entropía Normalizada de Shannon y $\Delta P \in [0, 1]$ es el margen entre la clase predicha mayoritaria y la segunda alternativa más probable.
 \begin{itemize}
     \item \textbf{CUI $\le 35\%$ (Certeza Alta):} Distribución unimodal pronunciada. Se autoriza el dictamen de triaje automático.
     \item \textbf{CUI $36\% - 55\%$ (Certeza Moderada):} Ambigüedad limítrofe entre clases benignas (p. ej., fibroadenoma vs. mastopatía). Se recomienda ecografía complementaria.
@@ -448,14 +532,44 @@ Donde $H_{\text{norm}} \in [0, 1]$ es la Entropía Normalizada de Shannon y $\De
 \end{itemize}
 
 % ======================================================================================
-% SECCIÓN 5: ARQUITECTURA HUAWEI CLOUD
+% SECCIÓN 6: MARCO REGULATORIO EN EL SALVADOR
+% ======================================================================================
+\section{Marco Regulatorio y Ruta de Validación Clínica (SRS El Salvador)}
+
+Dada la experiencia regulatoria del equipo en la **Superintendencia de Regulación Sanitaria (SRS)** de El Salvador, el desarrollo de VITA-ES se ciñe estrictamente a la normativa legal vigente para dispositivos médicos:
+
+\subsection{Normativa Local Salvadoreña}
+\begin{enumerate}
+    \item \textbf{Clasificación del Dispositivo (Clase II):} Conforme al **RTS 11.03.02:21** (\textit{Reglamento Técnico Salvadoreño para el Registro de Dispositivos Médicos}), VITA-ES clasifica como Dispositivo Médico Clase II (riesgo potencial moderado, no invasivo con fuente de energía externa para tamizaje diagnóstico).
+    \item \textbf{Buenas Prácticas de Manufactura y Ensamble:} Cumplimiento del **RTS 11.03.03:22** para ensamble de sondas, almacenamiento y distribución de parches biocompatibles.
+    \item \textbf{Comité de Ética en Investigación:} Aprobación previa por el **Comité Nacional de Ética de Investigación en Salud (CNEIS)** y comités locales (CLEIS) para la ejecución de ensayos con pacientes.
+    \item \textbf{Tecnovigilancia y Registro Sanitario:} Trazabilidad y reporte continuo de eventos adversos bajo el **RTS 11.03.04:23**.
+\end{enumerate}
+
+\subsection{Estándares Internacionales de Ingeniería Biomédica}
+\begin{itemize}
+    \item \textbf{ISO 13485:2016:} Sistema de gestión de la calidad para diseño y manufactura de dispositivos médicos.
+    \item \textbf{ISO 14971:2019:} Gestión de riesgos para dispositivos médicos a lo largo de todo el ciclo de vida.
+    \item \textbf{IEC 60601-1 / IEC 60601-1-2:} Seguridad eléctrica y compatibilidad electromagnética en equipos electromédicos.
+    \item \textbf{IEC 62304 / IEC 62366:} Ciclo de vida del software médico (SaMD) e ingeniería de usabilidad para enfermería comunitaria.
+\end{itemize}
+
+\subsection{Fases de Validación Clínica (Protocolo)}
+\begin{itemize}
+    \item \textbf{Fase 0 (Preclínica de Laboratorio):} Validación biofísica con fantomas de gel conductivo mamario (coeficiente de variación $CV < 5\%$).
+    \item \textbf{Fase 1 (Piloto Clínico en UCSF):} Estudio con $N=100$ pacientes en unidades de salud comunitarias contrastado contra mamografía digital bilateral.
+    \item \textbf{Fase 2 (Validación Multicéntrica):} $N=500$ pacientes en 5 departamentos de El Salvador para re-entrenamiento continuo de los modelos de IA en Huawei ModelArts con fenotipos mamarios locales.
+    \item \textbf{Fase 3 (Alcance y Financiamiento):} Registro sanitario formal ante la SRS y postulación a financiamiento mediante subsidio **R21 de los NIH** (\textit{National Institutes of Health} de EE. UU.) a través de colaboración institucional internacional.
+\end{itemize}
+
+% ======================================================================================
+% SECCIÓN 7: ARQUITECTURA HUAWEI CLOUD
 % ======================================================================================
 \section{Arquitectura Tecnológica Huawei Cloud (Edge-to-Cloud)}
 
-\subsection{Ecosistema Híbrido Integrado}
 VITA-ES implementa una topología distribuida que articula la inferencia ultrarrápida en la sonda portátil con la gobernanza hospitalaria y re-entrenamiento continuo en la nube de Huawei.
 
-% --- FIGURA 3: ARQUITECTURA HUAWEI CLOUD EN TIKZ (COMPACTA Y SIN DESBORDES) ---
+% --- FIGURA 4: ARQUITECTURA HUAWEI CLOUD EN TIKZ (COMPACTA Y SIN DESBORDES) ---
 \begin{figure}[H]
 \centering
 \resizebox{0.95\linewidth}{!}{
@@ -501,50 +615,10 @@ VITA-ES implementa una topología distribuida que articula la inferencia ultrarr
 
 \subsection{Servicios de Huawei Cloud Desplegados}
 \begin{enumerate}
-    \item \textbf{Huawei ModelArts (Inferencia y MLOps):} Empaquetado en \texttt{modelarts\_deploy/} con scripts de servicio \texttt{customize\_service.py} y descriptores \texttt{config.json}. Permite orquestación de modelos en contenedores acelerados por NPU Huawei Ascend 910 Pro con versionado continuo.
+    \item \textbf{Huawei ModelArts (Inferencia y MLOps):} Empaquetado en \texttt{modelarts\_deploy/} con scripts de servicio \texttt{customize\_service.py} y descriptores \texttt{config.json}. Permite orquestación de modelos en contenedores acelerados por NPU Huawei Ascend 910 Pro con re-entrenamiento federado continuo para la Fase 2 del estudio multicéntrico.
     \item \textbf{MindSpore Lite Edge Ingestion:} Exportación de modelos a formato abierto ONNX (\texttt{model\_rf.onnx} y \texttt{model\_svm.onnx}) para ejecución en la sonda autónoma con procesadores Ascend 310, garantizando operatividad en brigadas rurales sin internet.
     \item \textbf{Huawei DCS (Distributed Cache Service):} Clúster Redis Enterprise para almacenar tramas binarias BLE crudas (\texttt{AA 55 04 28 ...}) a latencias inferiores a 1.5~ms, amortiguando ráfagas en jornadas de tamizaje masivo.
-    \item \textbf{Huawei RDS (Relational Database Service):} Base de datos relacional PostgreSQL con cifrado en reposo administrado mediante \textbf{Huawei KMS (Key Management Service)} con estándar AES-256 para salvaguardar expedientes clínicos conforme a normativas HIPAA y GDPR.
-\end{enumerate}
-
-% ======================================================================================
-% SECCIÓN 6: CONTROL DE CALIDAD SQI
-% ======================================================================================
-\section{Control de Calidad de Señal y Seguridad Clínica (SQI)}
-Para prevenir diagnósticos erróneos por fallas de sensado, el módulo de control evalúa el barrido espectral en tiempo real antes de activar los clasificadores:
-\begin{enumerate}
-    \item \textbf{Contacto Cutáneo Deficiente / Piel Seca:} Si $R_0 > 4,200\ \Omega$ o la reactancia capacitiva es plana ($\theta < 0.03\text{ rad}$), se detecta electrodo desprendido.
-    \item \textbf{Cortocircuito de Gel:} Si $Z' < 50\ \Omega$ en todo el espectro, se detecta puente accidental por exceso de gel conductor.
-    \item \textbf{Artefactos de Ruido Instrumental:} Si el residuo de suavidad Cole-Cole supera el umbral ($SNR < 14\text{ dB}$).
-    \item \textbf{Interlock de Seguridad Activo:} Si $\text{SQI} < 70\%$, la inferencia diagnóstica \textbf{se suspende de inmediato}, mostrando en pantalla las instrucciones de remediación clínica.
-\end{enumerate}
-
-% ======================================================================================
-% SECCIÓN 7: PROYECCIÓN Y HOJA DE RUTA
-% ======================================================================================
-\section{Hacia Dónde Apunta el Proyecto: Visión y Hoja de Ruta}
-
-\subsection{Impacto Comunitario y Descentralización}
-VITA-ES busca transformar el modelo tradicional de tamizaje pasivo (donde la mujer debe trasladarse a un hospital urbano especializado) en un modelo de \textbf{tamizaje proactivo descentralizado}, desplegando sondas en unidades de atención primaria, brigadas móviles y clínicas rurales.
-
-\subsection{Hoja de Ruta Estratégica (Roadmap 2026--2028)}
-\begin{itemize}
-    \item \textbf{Fase 1 (Actual - Q4 2026):} Prototipo de validación biofísica con emulador de hardware AD5933, benchmarking de 4 modelos en Model Zoo, índice CUI, integración a ModelArts y estación clínica interactiva.
-    \item \textbf{Fase 2 (Q1--Q2 2027):} Fabricación del prototipo industrial con electrodos concéntricos en acero quirúrgico 316L, certificación de biocompatibilidad ISO 10993 y módem IoT 4G-LTE Cat-M1 nativo.
-    \item \textbf{Fase 3 (Q3--Q4 2027):} Ensayo clínico piloto hospitalario con $N=500$ pacientes programadas para biopsia mamaria para la homologación como Dispositivo Médico Clase II.
-    \item \textbf{Fase 4 (2028):} Red de Aprendizaje Federado (\textit{Federated Learning}) en Huawei Cloud ModelArts para actualización descentralizada de modelos preservando la confidencialidad de los datos hospitalarios.
-\end{itemize}
-
-% ======================================================================================
-% SECCIÓN 8: OPORTUNIDADES DE MEJORA
-% ======================================================================================
-\section{Oportunidades de Mejora y Limitaciones Actuales}
-
-\begin{enumerate}
-    \item \textbf{Transición a Medición Tetra-Polar (4 Electrodos):} La configuración bipolar actual incluye la impedancia de la piel en la lectura. Una arquitectura tetra-polar (dos electrodos de inyección de corriente y dos electrodos sensores de tensión diferencial) eliminará por completo la impedancia de contacto cutáneo.
-    \item \textbf{Ampliación de Cohortes In-Vivo Locales:} Se requiere recolectar datos in-vivo de pacientes latinoamericanas para ampliar la diversidad fenotípica de las lesiones benignas (\texttt{fad} y \texttt{mas}).
-    \item \textbf{Tomografía de Bioimpedancia 2D/3D (EIT):} Evolucionar de una sonda de punto focal hacia un cabezal anular circular multielectrodo (16 o 32 canales) para reconstruir imágenes de resistividad bidimensionales del tejido en tiempo real.
-    \item \textbf{Fusión End-to-End con Imágenes Ecográficas:} Integrar redes multimodales densas que concatenen el vector de bioimpedancia con ecografías mamarias B-Mode directamente en Huawei ModelArts.
+    \item \textbf{Huawei RDS (Relational Database Service):} Base de datos relacional PostgreSQL con cifrado en reposo administrado mediante \textbf{Huawei KMS (Key Management Service)} con estándar AES-256 para salvaguardar expedientes clínicos conforme a normativas HIPAA, GDPR y RTS 11.03.04:23.
 \end{enumerate}
 
 % ======================================================================================
@@ -583,6 +657,12 @@ Analog Devices, \textit{AD5933: 1 MSPS, 12-Bit Impedance Converter Network Analy
 
 \bibitem{huawei2025}
 Huawei Cloud, \textit{ModelArts AI Development Platform \& MindSpore Lite Edge Inference Architecture Guide}, Huawei Technologies Co., Ltd., 2025.
+
+\bibitem{srs2021}
+Superintendencia de Regulación Sanitaria (SRS) de El Salvador, \textit{RTS 11.03.02:21 Dispositivos Médicos. Registro Sanitario e Importación}, San Salvador, El Salvador, 2021.
+
+\bibitem{srs2023}
+Superintendencia de Regulación Sanitaria (SRS) de El Salvador, \textit{RTS 11.03.04:23 Ensayos Clínicos con Dispositivos Médicos y Tecnovigilancia}, San Salvador, El Salvador, 2023.
 \end{thebibliography}
 
 \end{document}
