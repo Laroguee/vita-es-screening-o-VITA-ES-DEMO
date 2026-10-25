@@ -1,0 +1,196 @@
+{
+  "model_name": "VITA-ES-EIS-Classifier",
+  "version": "1.0.0",
+  "framework": "scikit-learn / Huawei ModelArts compatible",
+  "algorithm": "Balanced Random Forest Ensemble",
+  "training_timestamp": "2026-10-25T01:00:02.428767Z",
+  "num_samples": 106,
+  "features": [
+    "I0",
+    "PA500",
+    "HFS",
+    "DA",
+    "Area",
+    "A/DA",
+    "Max IP",
+    "DR",
+    "P"
+  ],
+  "classes": [
+    "adi",
+    "car",
+    "con",
+    "fad",
+    "gla",
+    "mas"
+  ],
+  "class_mapping": {
+    "car": {
+      "name": "Carcinoma",
+      "description": "Neoplasia maligna de mama con alta celularidad y atipia",
+      "risk_level": "ALTO RIESGO",
+      "risk_code": 2,
+      "color": "#EF4444",
+      "birads_category": "BI-RADS 4/5 (Sospechoso de Malignidad)",
+      "clinical_action": "Derivación urgente a Biopsia con Aguja Gruesa (BAG) y Mamografía diagnóstica prioritaria.",
+      "cole_params": {
+        "R0": 420.0,
+        "Rinf": 90.0,
+        "tau": 1.2e-06,
+        "alpha": 0.72
+      }
+    },
+    "fad": {
+      "name": "Fibroadenoma",
+      "description": "Tumor benigno fibroepitelial bifásico común en mujeres jóvenes",
+      "risk_level": "RIESGO MODERADO",
+      "risk_code": 1,
+      "color": "#F59E0B",
+      "birads_category": "BI-RADS 3 (Probablemente Benigno)",
+      "clinical_action": "Evaluación por Ultrasonido mamario complementario y seguimiento clínico en 3 a 6 meses.",
+      "cole_params": {
+        "R0": 780.0,
+        "Rinf": 130.0,
+        "tau": 1e-06,
+        "alpha": 0.76
+      }
+    },
+    "mas": {
+      "name": "Mastopatía",
+      "description": "Condición fibroquística y alteraciones proliferativas benignas",
+      "risk_level": "RIESGO MODERADO",
+      "risk_code": 1,
+      "color": "#F59E0B",
+      "birads_category": "BI-RADS 3 (Probablemente Benigno)",
+      "clinical_action": "Monitoreo clínico semestral y control ecográfico; correlación con ciclo hormonal.",
+      "cole_params": {
+        "R0": 850.0,
+        "Rinf": 140.0,
+        "tau": 9.5e-07,
+        "alpha": 0.78
+      }
+    },
+    "gla": {
+      "name": "Glandular",
+      "description": "Parénquima glandular normal ductal y lobulillar",
+      "risk_level": "BAJO RIESGO",
+      "risk_code": 0,
+      "color": "#10B981",
+      "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
+      "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
+      "cole_params": {
+        "R0": 1350.0,
+        "Rinf": 180.0,
+        "tau": 8.5e-07,
+        "alpha": 0.82
+      }
+    },
+    "con": {
+      "name": "Conectivo",
+      "description": "Estroma conectivo y fibroso mamario estructural sano",
+      "risk_level": "BAJO RIESGO",
+      "risk_code": 0,
+      "color": "#10B981",
+      "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
+      "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
+      "cole_params": {
+        "R0": 1600.0,
+        "Rinf": 200.0,
+        "tau": 8e-07,
+        "alpha": 0.83
+      }
+    },
+    "adi": {
+      "name": "Adiposo",
+      "description": "Tejido graso mamario subcutáneo y retromamario normal",
+      "risk_level": "BAJO RIESGO",
+      "risk_code": 0,
+      "color": "#10B981",
+      "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
+      "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
+      "cole_params": {
+        "R0": 2150.0,
+        "Rinf": 240.0,
+        "tau": 7.5e-07,
+        "alpha": 0.85
+      }
+    }
+  },
+  "metrics": {
+    "accuracy": 0.6792452830188679,
+    "balanced_accuracy": 0.6586580086580086,
+    "f1_macro": 0.6611262194595529,
+    "precision_macro": 0.6707169641952251,
+    "recall_macro": 0.6586580086580086,
+    "carcinoma_sensitivity": 0.8571428571428571,
+    "carcinoma_precision": 0.782608695652174
+  },
+  "confusion_matrix": [
+    [
+      20,
+      0,
+      2,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      18,
+      0,
+      0,
+      0,
+      3
+    ],
+    [
+      3,
+      0,
+      11,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      6,
+      2,
+      6
+    ],
+    [
+      0,
+      1,
+      0,
+      3,
+      8,
+      4
+    ],
+    [
+      0,
+      3,
+      0,
+      2,
+      4,
+      9
+    ]
+  ],
+  "feature_importances": {
+    "I0": 0.19981483069065314,
+    "PA500": 0.09674742478522033,
+    "HFS": 0.049953826605733664,
+    "DA": 0.11668199734979262,
+    "Area": 0.07722768261893254,
+    "A/DA": 0.10084404736056377,
+    "Max IP": 0.12088671051848772,
+    "DR": 0.08100416378929086,
+    "P": 0.15683931628132547
+  },
+  "huawei_cloud_deployment": {
+    "modelarts_service_id": "serv-vita-es-edge-infer-v1",
+    "model_format": "pkl",
+    "runtime_env": "Python 3.12 (Ascend/x86 compatible)",
+    "api_endpoint": "https://apigw.cn-north-4.huaweicloudapis.com/v1/infers/vita-es-triage",
+    "recommended_instance": "modelarts.vm.cpu.2u4g / ECS c7.large.2"
+  }
+}

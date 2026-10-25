@@ -1,0 +1,79 @@
+{
+  "model_algorithm": "breast_bioimpedance_triage",
+  "model_type": "Scikit_Learn",
+  "runtime": "python3.12",
+  "engine_name": "Ascend-Powered-Python",
+  "engine_version": "Ascend-910-MindSpore-Compatible",
+  "model_name": "VITA-ES-ModelArts-Inference",
+  "model_version": "2.4.1",
+  "apis": [
+    {
+      "protocol": "https",
+      "url": "/v1/infers/vita-es-triage",
+      "method": "post",
+      "request": {
+        "Content-type": "application/json",
+        "data": {
+          "type": "object",
+          "properties": {
+            "patient_id": {
+              "type": "string",
+              "description": "Identificador único anonimizado del paciente (HIPAA compliant)"
+            },
+            "features": {
+              "type": "object",
+              "description": "Vector canónico de 9 características de bioimpedancia Cole-Cole",
+              "properties": {
+                "I0": {"type": "number"},
+                "PA500": {"type": "number"},
+                "HFS": {"type": "number"},
+                "DA": {"type": "number"},
+                "Area": {"type": "number"},
+                "A/DA": {"type": "number"},
+                "Max IP": {"type": "number"},
+                "DR": {"type": "number"},
+                "P": {"type": "number"}
+              },
+              "required": ["I0", "PA500", "HFS", "DA", "Area", "A/DA", "Max IP", "DR", "P"]
+            },
+            "model_name": {
+              "type": "string",
+              "enum": ["XGBoost", "Random Forest", "SVM (RBF)", "Ensamble"],
+              "default": "XGBoost"
+            },
+            "metabolic_factors": {
+              "type": "object",
+              "description": "Biomarcadores metabólicos opcionales del dataset Coimbra",
+              "properties": {
+                "age": {"type": "number"},
+                "bmi": {"type": "number"},
+                "glucose": {"type": "number"}
+              }
+            }
+          },
+          "required": ["features"]
+        }
+      },
+      "response": {
+        "Content-type": "application/json",
+        "data": {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "patient_id": {"type": "string"},
+            "prediction": {"type": "string"},
+            "prediction_name": {"type": "string"},
+            "confidence": {"type": "number"},
+            "triage_risk": {"type": "string"},
+            "birads_category": {"type": "string"},
+            "clinical_uncertainty_cui": {"type": "number"},
+            "uncertainty_level": {"type": "string"},
+            "multimodal_risk_score": {"type": "number"},
+            "clinical_action": {"type": "string"},
+            "latency_ms": {"type": "number"}
+          }
+        }
+      }
+    }
+  ]
+}

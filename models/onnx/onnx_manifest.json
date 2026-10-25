@@ -1,0 +1,12 @@
+{
+  "Random Forest": {
+    "onnx_file": "models/onnx\\model_rf.onnx",
+    "size_kb": 349.84,
+    "target_hardware": "Huawei Ascend 310 / Atlas 200 MindSpore Lite"
+  },
+  "SVM (RBF)": {
+    "onnx_file": "models/onnx\\model_svm.onnx",
+    "size_kb": 6.9,
+    "target_hardware": "Huawei Ascend 310 MindSpore Lite"
+  }
+}

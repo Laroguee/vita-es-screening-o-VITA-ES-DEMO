@@ -1,0 +1,389 @@
+{
+  "timestamp": "2026-10-25T02:53:21.415265+00:00",
+  "num_samples": 106,
+  "classes": [
+    "adi",
+    "car",
+    "con",
+    "fad",
+    "gla",
+    "mas"
+  ],
+  "class_mapping": {
+    "car": {
+      "name": "Carcinoma",
+      "description": "Neoplasia maligna de mama con alta celularidad y atipia",
+      "risk_level": "ALTO RIESGO",
+      "risk_code": 2,
+      "color": "#EF4444",
+      "birads_category": "BI-RADS 4/5 (Sospechoso de Malignidad)",
+      "clinical_action": "Derivación urgente a Biopsia con Aguja Gruesa (BAG) y Mamografía diagnóstica prioritaria.",
+      "cole_params": {
+        "R0": 420.0,
+        "Rinf": 90.0,
+        "tau": 1.2e-06,
+        "alpha": 0.72
+      }
+    },
+    "fad": {
+      "name": "Fibroadenoma",
+      "description": "Tumor benigno fibroepitelial bifásico común en mujeres jóvenes",
+      "risk_level": "RIESGO MODERADO",
+      "risk_code": 1,
+      "color": "#F59E0B",
+      "birads_category": "BI-RADS 3 (Probablemente Benigno)",
+      "clinical_action": "Evaluación por Ultrasonido mamario complementario y seguimiento clínico en 3 a 6 meses.",
+      "cole_params": {
+        "R0": 780.0,
+        "Rinf": 130.0,
+        "tau": 1e-06,
+        "alpha": 0.76
+      }
+    },
+    "mas": {
+      "name": "Mastopatía",
+      "description": "Condición fibroquística y alteraciones proliferativas benignas",
+      "risk_level": "RIESGO MODERADO",
+      "risk_code": 1,
+      "color": "#F59E0B",
+      "birads_category": "BI-RADS 3 (Probablemente Benigno)",
+      "clinical_action": "Monitoreo clínico semestral y control ecográfico; correlación con ciclo hormonal.",
+      "cole_params": {
+        "R0": 850.0,
+        "Rinf": 140.0,
+        "tau": 9.5e-07,
+        "alpha": 0.78
+      }
+    },
+    "gla": {
+      "name": "Glandular",
+      "description": "Parénquima glandular normal ductal y lobulillar",
+      "risk_level": "BAJO RIESGO",
+      "risk_code": 0,
+      "color": "#10B981",
+      "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
+      "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
+      "cole_params": {
+        "R0": 1350.0,
+        "Rinf": 180.0,
+        "tau": 8.5e-07,
+        "alpha": 0.82
+      }
+    },
+    "con": {
+      "name": "Conectivo",
+      "description": "Estroma conectivo y fibroso mamario estructural sano",
+      "risk_level": "BAJO RIESGO",
+      "risk_code": 0,
+      "color": "#10B981",
+      "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
+      "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
+      "cole_params": {
+        "R0": 1600.0,
+        "Rinf": 200.0,
+        "tau": 8e-07,
+        "alpha": 0.83
+      }
+    },
+    "adi": {
+      "name": "Adiposo",
+      "description": "Tejido graso mamario subcutáneo y retromamario normal",
+      "risk_level": "BAJO RIESGO",
+      "risk_code": 0,
+      "color": "#10B981",
+      "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
+      "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
+      "cole_params": {
+        "R0": 2150.0,
+        "Rinf": 240.0,
+        "tau": 7.5e-07,
+        "alpha": 0.85
+      }
+    }
+  },
+  "features": [
+    "I0",
+    "PA500",
+    "HFS",
+    "DA",
+    "Area",
+    "A/DA",
+    "Max IP",
+    "DR",
+    "P"
+  ],
+  "models": {
+    "Random Forest": {
+      "accuracy": 67.92,
+      "balanced_accuracy": 65.87,
+      "f1_macro": 0.6611,
+      "precision_macro": 0.6707,
+      "recall_macro": 0.6587,
+      "carcinoma_sensitivity": 85.71,
+      "carcinoma_precision": 78.26,
+      "avg_latency_ms": 5.06,
+      "confusion_matrix": [
+        [
+          20,
+          0,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          18,
+          0,
+          0,
+          0,
+          3
+        ],
+        [
+          3,
+          0,
+          11,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          6,
+          2,
+          6
+        ],
+        [
+          0,
+          1,
+          0,
+          3,
+          8,
+          4
+        ],
+        [
+          0,
+          3,
+          0,
+          2,
+          4,
+          9
+        ]
+      ],
+      "architecture_type": "Tabular Ensemble / Kernel"
+    },
+    "SVM (RBF)": {
+      "accuracy": 60.38,
+      "balanced_accuracy": 56.63,
+      "f1_macro": 0.5291,
+      "precision_macro": 0.5178,
+      "recall_macro": 0.5663,
+      "carcinoma_sensitivity": 85.71,
+      "carcinoma_precision": 81.82,
+      "avg_latency_ms": 0.29,
+      "confusion_matrix": [
+        [
+          21,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          18,
+          0,
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          0,
+          12,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          3,
+          11
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          15
+        ],
+        [
+          0,
+          3,
+          0,
+          0,
+          3,
+          12
+        ]
+      ],
+      "architecture_type": "Tabular Ensemble / Kernel"
+    },
+    "XGBoost": {
+      "accuracy": 71.7,
+      "balanced_accuracy": 70.02,
+      "f1_macro": 0.7004,
+      "precision_macro": 0.7041,
+      "recall_macro": 0.7002,
+      "carcinoma_sensitivity": 90.48,
+      "carcinoma_precision": 86.36,
+      "avg_latency_ms": 0.17,
+      "confusion_matrix": [
+        [
+          21,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          19,
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          2,
+          0,
+          12,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          8,
+          1,
+          5
+        ],
+        [
+          0,
+          0,
+          0,
+          4,
+          9,
+          3
+        ],
+        [
+          0,
+          2,
+          0,
+          5,
+          4,
+          7
+        ]
+      ],
+      "architecture_type": "Tabular Ensemble / Kernel"
+    },
+    "1D CNN (VITA-Net)": {
+      "accuracy": 47.17,
+      "balanced_accuracy": 44.94,
+      "f1_macro": 0.4151,
+      "precision_macro": 0.4624,
+      "recall_macro": 0.4494,
+      "carcinoma_sensitivity": 57.14,
+      "carcinoma_precision": 66.67,
+      "avg_latency_ms": 43.94,
+      "confusion_matrix": [
+        [
+          15,
+          4,
+          3,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          12,
+          3,
+          0,
+          0,
+          6
+        ],
+        [
+          1,
+          0,
+          9,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          0,
+          1,
+          2,
+          0,
+          12
+        ],
+        [
+          0,
+          1,
+          1,
+          2,
+          0,
+          12
+        ],
+        [
+          0,
+          1,
+          5,
+          0,
+          0,
+          12
+        ]
+      ],
+      "architecture_type": "Deep Learning Conv1D"
+    }
+  },
+  "auxiliary_models": {
+    "coimbra": {
+      "features": [
+        "Age",
+        "BMI",
+        "Glucose",
+        "Insulin",
+        "HOMA",
+        "Leptin",
+        "Adiponectin",
+        "Resistin",
+        "MCP.1"
+      ],
+      "samples": 116,
+      "status": "ready"
+    },
+    "wdbc": {
+      "num_features": 30,
+      "samples": 569,
+      "status": "ready"
+    }
+  },
+  "best_carcinoma_sensitivity_model": "XGBoost",
+  "huawei_hardware_target": {
+    "edge_accelerator": "Huawei Ascend 310 / Atlas 200 (MindSpore Lite)",
+    "cloud_trainer": "Huawei Cloud ModelArts (Ascend 910 Pro NPU)",
+    "recommended_inference_mode": "Edge-First con fallback a ModelArts Cloud"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "device_metadata": {
+    "device_id": "VITA-PRB-0428",
+    "firmware": "v2.4.1-MindSpore-Lite",
+    "hardware_rev": "HW-AD5933-RevC",
+    "battery_pct": 93.5,
+    "temperature_c": 36.5,
+    "electrode_status": "OPTIMAL_DIFFERENTIAL_CONTACT",
+    "sqi_score": 97.9,
+    "snr_db": 38.8,
+    "is_signal_valid": true,
+    "ble_packet_raw_hex": "AA 55 04 28 5D 61 07 D9 06 9B DE AD"
+  },
+  "tissue_emulated": {
+    "code": "adi",
+    "name": "Adiposo",
+    "expected_risk": "BAJO RIESGO"
+  },
+  "features_extracted": {
+    "I0": 2027.9393329663699,
+    "PA500": 0.06428740556333871,
+    "HFS": -0.06611217240629776,
+    "DA": 296.4262738295377,
+    "Area": 30845.226916360596,
+    "A/DA": 104.05699372687317,
+    "Max IP": 136.09495159994412,
+    "DR": 301.165032102464,
+    "P": 353.91675518281073
+  },
+  "sweep_points": [
+    {
+      "Frequency_kHz": 15.625,
+      "Frequency_Hz": 15625.0,
+      "Z_Real": 2018.6466215145424,
+      "Z_Imag": -24.934514977701433,
+      "Minus_Z_Imag": 24.934514977701433,
+      "Z_Magnitude": 2018.8006123907455,
+      "Phase_Rad": -0.012351466921639619,
+      "Phase_Deg": -0.7076869254053932
+    },
+    {
+      "Frequency_kHz": 31.25,
+      "Frequency_Hz": 31250.0,
+      "Z_Real": 2016.0230982470237,
+      "Z_Imag": -44.79693292036164,
+      "Minus_Z_Imag": 44.79693292036164,
+      "Z_Magnitude": 2016.5207407474388,
+      "Phase_Rad": -0.022216790244405916,
+      "Phase_Deg": -1.2729283153318798
+    },
+    {
+      "Frequency_kHz": 62.5,
+      "Frequency_Hz": 62500.0,
+      "Z_Real": 1983.6606042821838,
+      "Z_Imag": -75.59768906782833,
+      "Minus_Z_Imag": 75.59768906782833,
+      "Z_Magnitude": 1985.1006028847894,
+      "Phase_Rad": -0.03809175911233154,
+      "Phase_Deg": -2.1824970313655925
+    },
+    {
+      "Frequency_kHz": 125.0,
+      "Frequency_Hz": 125000.0,
+      "Z_Real": 1930.2181714276273,
+      "Z_Imag": -113.91356110831966,
+      "Minus_Z_Imag": 113.91356110831966,
+      "Z_Magnitude": 1933.576605338871,
+      "Phase_Rad": -0.058947527031489776,
+      "Phase_Deg": -3.3774445116376985
+    },
+    {
+      "Frequency_kHz": 250.0,
+      "Frequency_Hz": 250000.0,
+      "Z_Real": 1816.658072274102,
+      "Z_Imag": -136.09495159994412,
+      "Minus_Z_Imag": 136.09495159994412,
+      "Z_Magnitude": 1821.7487168678472,
+      "Phase_Rad": -0.07477532925763575,
+      "Phase_Deg": -4.284310778163632
+    },
+    {
+      "Frequency_kHz": 500.0,
+      "Frequency_Hz": 500000.0,
+      "Z_Real": 1785.1948615693336,
+      "Z_Imag": -114.92391159592735,
+      "Minus_Z_Imag": 114.92391159592735,
+      "Z_Magnitude": 1788.8902144150884,
+      "Phase_Rad": -0.06428740556333871,
+      "Phase_Deg": -3.683397014625157
+    },
+    {
+      "Frequency_kHz": 1000.0,
+      "Frequency_Hz": 1000000.0,
+      "Z_Real": 1726.7743008639059,
+      "Z_Imag": -76.6943860601924,
+      "Minus_Z_Imag": 76.6943860601924,
+      "Z_Magnitude": 1728.476645771409,
+      "Phase_Rad": -0.04438565859053452,
+      "Phase_Deg": -2.543110908146214
+    }
+  ],
+  "timestamp": "2026-10-25T16:24:36.655656+00:00"
+}
