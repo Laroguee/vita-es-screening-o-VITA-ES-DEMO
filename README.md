@@ -146,7 +146,7 @@ La plataforma traduce las probabilidades matemáticas a un protocolo asistencial
 
 ### 2. Clonar el Repositorio y Crear Entorno Virtual
 ```bash
-git clone https://github.com/Laroguee/API-de-reservaciones.git
+git clone https://github.com/Laroguee/vita-es-screening-o-VITA-ES-DEMO.git
 cd VITA-ES-DEMO
 
 # Crear y activar entorno virtual
@@ -162,27 +162,23 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Entrenar y Validar el Modelo de IA
+### 4. Entrenar y Validar el Model Zoo de IA Médica
 ```bash
-python src/train.py
+python src/models_zoo.py
 ```
-*Salida esperada:*
-```text
-======================================================================
- VITA-ES: PIPELINE DE ENTRENAMIENTO DE IA MÉDICA (HUAWEI MODELARTS)
-======================================================================
-[*] Registros cargados: 106
-[*] Ejecutando validación cruzada estratificada (k=5)...
-[+] Métricas de Validación Cruzada:
-    - Exactitud Global (Accuracy) : 67.92%
-    - Sensibilidad Carcinoma (Car): 85.71% (CRÍTICO CLÍNICO)
-    - Precisión Carcinoma (Car)   : 78.26%
-[+] Jerarquía de importancia de características biofísicas:
-    - I0      : 19.98%
-    - P       : 15.68%
-    - Max IP  : 12.09%
-    ...
-```
+*Resultados verificables de Validación Cruzada Estratificada ($k=5$, $N=106$ casos reales de Jossinet):*
+
+| Modelo del Model Zoo | Exactitud Histológica (6 Clases) | Exactitud Triaje BI-RADS (3 Niveles) | Sensibilidad Carcinoma (`car`) | Especificidad Carcinoma (`car`) | Latencia Media |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **XGBoost (Campeón)** | **71.70%** | **83.96%** | **90.48%** | **96.47%** | **0.21 ms** |
+| **Ensamble Multimodelo** | 70.75% | 82.08% | **90.48%** | 95.29% | 5.75 ms |
+| **1D CNN (VITA-Net)** | 68.87% | 78.30% | 80.95% | 95.29% | 44.50 ms |
+| **Balanced Random Forest** | 67.92% | 80.19% | 85.71% | 94.12% | 5.20 ms |
+| **SVM (Kernel RBF)** | 60.38% | 73.58% | 85.71% | 95.29% | 0.31 ms |
+
+*Modelos Auxiliares de Fusión Multimodal ($k=5$ Stratified CV):*
+* **Coimbra BCCD (`dataR2.csv`, $N=116$):** Exactitud CV = **72.41%** | Sensibilidad = **75.00%**
+* **Wisconsin WDBC (`wdbc.data`, $N=569$):** Exactitud CV = **97.36%** | Sensibilidad = **94.34%**
 
 ### 5. Iniciar la Aplicación Streamlit
 ```bash
@@ -236,6 +232,8 @@ curl http://localhost:8501/_stcore/health
 ---
 
 ## 👩‍💻 Equipo de Desarrollo VITA-ES
-* **Competencia:** Huawei ICT Competition 2026-2027
+* **Estudiantes:** Alejandro Ramos & Marjorie Cabrera (Ingeniería Biomédica / Experiencia en Regulación Sanitaria SRS El Salvador)
+* **Instructor Académico:** Prof. Rodrigo Pinto
+* **Competencia:** 11th Huawei ICT Competition 2026-2027
 * **Track:** Innovation Competition
-* **Tópico:** Creating Innovative AI Applications Powered by Huawei Cloud
+* **Tópico:** Topic 1: Creating Innovative AI Applications Powered by Huawei Cloud

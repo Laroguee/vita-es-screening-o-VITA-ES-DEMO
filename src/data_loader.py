@@ -9,7 +9,7 @@ from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 
-# Mapeo clínico de clases histológicas
+# Mapeo clínico de clases histológicas calibrado con las distribuciones empíricas de Jossinet (1996)
 CLASS_MAPPING = {
     "car": {
         "name": "Carcinoma",
@@ -19,7 +19,7 @@ CLASS_MAPPING = {
         "color": "#EF4444",
         "birads_category": "BI-RADS 4/5 (Sospechoso de Malignidad)",
         "clinical_action": "Derivación urgente a Biopsia con Aguja Gruesa (BAG) y Mamografía diagnóstica prioritaria.",
-        "cole_params": {"R0": 394.2, "Rinf": 241.2, "tau": 2.5e-7, "alpha": 0.85}
+        "cole_params": {"R0": 394.0, "Rinf": 90.0, "tau": 6.0e-7, "alpha": 0.65}
     },
     "fad": {
         "name": "Fibroadenoma",
@@ -29,7 +29,7 @@ CLASS_MAPPING = {
         "color": "#F59E0B",
         "birads_category": "BI-RADS 3 (Probablemente Benigno)",
         "clinical_action": "Evaluación por Ultrasonido mamario complementario y seguimiento clínico en 3 a 6 meses.",
-        "cole_params": {"R0": 245.9, "Rinf": 198.0, "tau": 5.6e-7, "alpha": 0.82}
+        "cole_params": {"R0": 245.0, "Rinf": 140.0, "tau": 6.0e-7, "alpha": 0.62}
     },
     "mas": {
         "name": "Mastopatía",
@@ -39,7 +39,7 @@ CLASS_MAPPING = {
         "color": "#F59E0B",
         "birads_category": "BI-RADS 3 (Probablemente Benigno)",
         "clinical_action": "Monitoreo clínico semestral y control ecográfico; correlación con ciclo hormonal.",
-        "cole_params": {"R0": 290.3, "Rinf": 226.7, "tau": 5.2e-7, "alpha": 0.85}
+        "cole_params": {"R0": 285.0, "Rinf": 160.0, "tau": 5.5e-7, "alpha": 0.72}
     },
     "gla": {
         "name": "Glandular",
@@ -49,7 +49,7 @@ CLASS_MAPPING = {
         "color": "#10B981",
         "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
         "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
-        "cole_params": {"R0": 238.3, "Rinf": 210.8, "tau": 1.5e-7, "alpha": 0.96}
+        "cole_params": {"R0": 210.0, "Rinf": 152.0, "tau": 4.5e-7, "alpha": 0.90}
     },
     "con": {
         "name": "Conectivo",
@@ -59,7 +59,7 @@ CLASS_MAPPING = {
         "color": "#10B981",
         "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
         "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
-        "cole_params": {"R0": 1212.9, "Rinf": 854.9, "tau": 2.0e-6, "alpha": 0.57}
+        "cole_params": {"R0": 1310.0, "Rinf": 890.0, "tau": 1.8e-6, "alpha": 0.48}
     },
     "adi": {
         "name": "Adiposo",
@@ -69,7 +69,7 @@ CLASS_MAPPING = {
         "color": "#10B981",
         "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
         "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
-        "cole_params": {"R0": 2052.1, "Rinf": 1727.3, "tau": 6.4e-7, "alpha": 0.88}
+        "cole_params": {"R0": 2020.0, "Rinf": 1410.0, "tau": 6.0e-7, "alpha": 0.76}
     }
 }
 

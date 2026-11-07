@@ -1,9 +1,9 @@
 {
   "model_name": "VITA-ES-EIS-Classifier",
-  "version": "1.0.0",
-  "framework": "scikit-learn / Huawei ModelArts compatible",
-  "algorithm": "Balanced Random Forest Ensemble",
-  "training_timestamp": "2026-10-25T01:00:02.428767Z",
+  "version": "2.5.0",
+  "framework": "scikit-learn / XGBoost / Keras / ONNX / Huawei ModelArts compatible",
+  "algorithm": "Multi-Model Zoo (Champion: XGBoost / Baseline: Balanced Random Forest)",
+  "training_timestamp": "2026-11-07T03:49:55.927328+00:00",
   "num_samples": 106,
   "features": [
     "I0",
@@ -34,10 +34,10 @@
       "birads_category": "BI-RADS 4/5 (Sospechoso de Malignidad)",
       "clinical_action": "Derivación urgente a Biopsia con Aguja Gruesa (BAG) y Mamografía diagnóstica prioritaria.",
       "cole_params": {
-        "R0": 420.0,
+        "R0": 394.0,
         "Rinf": 90.0,
-        "tau": 1.2e-06,
-        "alpha": 0.72
+        "tau": 6e-07,
+        "alpha": 0.65
       }
     },
     "fad": {
@@ -49,10 +49,10 @@
       "birads_category": "BI-RADS 3 (Probablemente Benigno)",
       "clinical_action": "Evaluación por Ultrasonido mamario complementario y seguimiento clínico en 3 a 6 meses.",
       "cole_params": {
-        "R0": 780.0,
-        "Rinf": 130.0,
-        "tau": 1e-06,
-        "alpha": 0.76
+        "R0": 245.0,
+        "Rinf": 140.0,
+        "tau": 6e-07,
+        "alpha": 0.62
       }
     },
     "mas": {
@@ -64,10 +64,10 @@
       "birads_category": "BI-RADS 3 (Probablemente Benigno)",
       "clinical_action": "Monitoreo clínico semestral y control ecográfico; correlación con ciclo hormonal.",
       "cole_params": {
-        "R0": 850.0,
-        "Rinf": 140.0,
-        "tau": 9.5e-07,
-        "alpha": 0.78
+        "R0": 285.0,
+        "Rinf": 160.0,
+        "tau": 5.5e-07,
+        "alpha": 0.72
       }
     },
     "gla": {
@@ -79,10 +79,10 @@
       "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
       "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
       "cole_params": {
-        "R0": 1350.0,
-        "Rinf": 180.0,
-        "tau": 8.5e-07,
-        "alpha": 0.82
+        "R0": 210.0,
+        "Rinf": 152.0,
+        "tau": 4.5e-07,
+        "alpha": 0.9
       }
     },
     "con": {
@@ -94,10 +94,10 @@
       "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
       "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
       "cole_params": {
-        "R0": 1600.0,
-        "Rinf": 200.0,
-        "tau": 8e-07,
-        "alpha": 0.83
+        "R0": 1310.0,
+        "Rinf": 890.0,
+        "tau": 1.8e-06,
+        "alpha": 0.48
       }
     },
     "adi": {
@@ -109,21 +109,28 @@
       "birads_category": "BI-RADS 1/2 (Normal / Hallazgo Benigno)",
       "clinical_action": "Continuar con protocolo habitual de tamizaje preventivo anual según grupo etario.",
       "cole_params": {
-        "R0": 2150.0,
-        "Rinf": 240.0,
-        "tau": 7.5e-07,
-        "alpha": 0.85
+        "R0": 2020.0,
+        "Rinf": 1410.0,
+        "tau": 6e-07,
+        "alpha": 0.76
       }
     }
   },
   "metrics": {
-    "accuracy": 0.6792452830188679,
-    "balanced_accuracy": 0.6586580086580086,
-    "f1_macro": 0.6611262194595529,
-    "precision_macro": 0.6707169641952251,
-    "recall_macro": 0.6586580086580086,
-    "carcinoma_sensitivity": 0.8571428571428571,
-    "carcinoma_precision": 0.782608695652174
+    "accuracy": 0.6792,
+    "balanced_accuracy": 0.6587,
+    "triage_3class_accuracy": 0.8019,
+    "f1_macro": 0.6611,
+    "precision_macro": 0.6707,
+    "recall_macro": 0.6587,
+    "carcinoma_sensitivity": 0.8571,
+    "carcinoma_specificity": 0.9412,
+    "carcinoma_precision": 0.7826,
+    "champion_xgboost_accuracy": 0.717,
+    "champion_xgboost_triage_accuracy": 0.8396,
+    "champion_xgboost_carcinoma_sensitivity": 0.9048,
+    "champion_xgboost_carcinoma_specificity": 0.9647,
+    "champion_xgboost_carcinoma_precision": 0.8636
   },
   "confusion_matrix": [
     [
@@ -187,10 +194,10 @@
     "P": 0.15683931628132547
   },
   "huawei_cloud_deployment": {
-    "modelarts_service_id": "serv-vita-es-edge-infer-v1",
-    "model_format": "pkl",
+    "modelarts_service_id": "serv-vita-es-edge-infer-v2",
+    "model_format": "pkl / onnx / keras",
     "runtime_env": "Python 3.12 (Ascend/x86 compatible)",
-    "api_endpoint": "https://apigw.cn-north-4.huaweicloudapis.com/v1/infers/vita-es-triage",
+    "api_endpoint": "/v1/infers/vita-es-triage",
     "recommended_instance": "modelarts.vm.cpu.2u4g / ECS c7.large.2"
   }
 }

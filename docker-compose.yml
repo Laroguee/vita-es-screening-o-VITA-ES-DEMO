@@ -1,0 +1,65 @@
+# ==============================================================================
+# VITA-ES: Orquestación Multi-Contenedor para Huawei Cloud ECS / CCE y Local
+# 11th Huawei ICT Competition 2026-2027 | Innovation Track - Topic 1
+# ==============================================================================
+version: "3.9"
+
+services:
+  vita-es-workstation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vita-es-workstation
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - HUAWEI_RDS_HOST=${HUAWEI_RDS_HOST:-vita-rds-postgres}
+      - HUAWEI_RDS_PORT=${HUAWEI_RDS_PORT:-5432}
+      - HUAWEI_RDS_DB=${HUAWEI_RDS_DB:-vita_es_clinical}
+      - HUAWEI_RDS_USER=${HUAWEI_RDS_USER:-vita_admin}
+      - HUAWEI_RDS_PASSWORD=${HUAWEI_RDS_PASSWORD:-VitaSecure2026!}
+      - HUAWEI_DCS_HOST=${HUAWEI_DCS_HOST:-vita-dcs-redis}
+      - HUAWEI_DCS_PORT=${HUAWEI_DCS_PORT:-6379}
+      - HUAWEI_MODELARTS_ENDPOINT=${HUAWEI_MODELARTS_ENDPOINT:-}
+    depends_on:
+      - vita-rds-postgres
+      - vita-dcs-redis
+    networks:
+      - vita-es-net
+
+  vita-rds-postgres:
+    image: postgres:15-alpine
+    container_name: vita-rds-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${HUAWEI_RDS_DB:-vita_es_clinical}
+      - POSTGRES_USER=${HUAWEI_RDS_USER:-vita_admin}
+      - POSTGRES_PASSWORD=${HUAWEI_RDS_PASSWORD:-VitaSecure2026!}
+    ports:
+      - "5432:5432"
+    volumes:
+      - vita_rds_data:/var/lib/postgresql/data
+    networks:
+      - vita-es-net
+
+  vita-dcs-redis:
+    image: redis:7-alpine
+    container_name: vita-dcs-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - vita_dcs_data:/data
+    networks:
+      - vita-es-net
+
+volumes:
+  vita_rds_data:
+  vita_dcs_data:
+
+networks:
+  vita-es-net:
+    driver: bridge
+

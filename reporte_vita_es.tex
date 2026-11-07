@@ -99,7 +99,7 @@
 % ======================================================================================
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{\footnotesize \textcolor{gray}{VITA-ES $\bullet$ StartupSTEM 2026 / Huawei ICT Competition}}
+\rhead{\footnotesize \textcolor{gray}{VITA-ES $\bullet$ 11th Huawei ICT Competition 2026--2027}}
 \lhead{\footnotesize \textcolor{wordblue}{\textbf{Reporte Técnico Ejecutivo: Plataforma VITA-ES}}}
 \lfoot{\footnotesize \textcolor{gray}{Topic 1: Innovative AI on Huawei Cloud $\bullet$ SRS El Salvador}}
 \rfoot{\footnotesize \textcolor{worddark}{Página \thepage\ de \pageref{LastPage}}}
@@ -134,7 +134,7 @@
     \begin{center}
         {\color{wordblue}\huge \textbf{VITA-ES: Plataforma Inteligente de Triaje Mamario Oportuno mediante Espectroscopía de Bioimpedancia y Fusión Multimodal}} \\[0.3cm]
         {\color{wordsteelblue}\large \textbf{Reporte Técnico: Integración del Dispositivo de Adquisición Portátil con el Motor Analítico de IA en el Borde y Huawei Cloud}} \\[0.2cm]
-        {\normalsize \textit{StartupSTEM 2026 $\bullet$ Huawei ICT Competition 2026--2027 (Topic 1: Innovative AI Powered by Huawei Cloud)}}
+        {\normalsize \textit{11th Huawei ICT Competition 2026--2027 $\bullet$ Innovation Competition (Topic 1: Innovative AI Powered by Huawei Cloud)}}
     \end{center}
     
     \vspace{0.2cm}
@@ -143,7 +143,8 @@
     
     \begin{minipage}[t]{0.48\textwidth}
         \footnotesize
-        \textbf{Equipo Fundador:} Marjorie Cabrera \& Alejandro Ramos \\
+        \textbf{Equipo Estudiantil:} Alejandro Ramos \& Marjorie Cabrera \\
+        \textbf{Instructor Académico:} Prof. Rodrigo Pinto \\
         \textbf{Especialidad:} Ingeniería Biomédica (5.º año) \\
         \textbf{Experiencia Regulatoria:} Superintendencia de Regulación Sanitaria (SRS) de El Salvador (Vigilancia y Tecnovigilancia) \\
         \textbf{Hardware Clínico:} Sonda VITA-PRB-0428 (\$300 USD) + Parche Descartable (\$0.90 USD)
@@ -167,7 +168,7 @@
 \begin{wordcallout}[title=Resumen Ejecutivo y Declaración de Complementariedad]
 En El Salvador, solo existen \textbf{18 mamógrafos públicos para atender a 3.2 millones de mujeres}, lo que genera listas de espera de más de 6 meses y provoca que los tumores se diagnostiquen tardíamente con un tamaño promedio de \textbf{4.8~cm}. El 40.1\% de las mujeres rurales se encuentra totalmente marginado del tamizaje. \textbf{VITA-ES} resuelve esta crisis mediante un dispositivo portátil de bioimpedancia eléctrica (\$300 USD) de uso comunitario y un parche de contacto bioeléctrico desechable (\$0.90 USD), operado por personal de enfermería en Unidades Comunitarias de Salud Familiar (UCSF). 
 
-El presente reporte establece formalmente cómo la \textbf{plataforma analítica y de software desarrollada en este repositorio complementa la adquisición física de la señal}. Mientras la sonda de hardware inyecta microcorrientes alternas inocuas y digitaliza la respuesta dieléctrica tisular, la plataforma de software actúa como el \textbf{motor de inteligencia clínica, control de calidad y triaje en 6 etapas}: (1) Validación en tiempo real del contacto piel-electrodo mediante el índice SQI (\textit{Signal Quality Index}); (2) Extracción biofísica automatizada de parámetros de dispersión Cole-Cole; (3) Fusión Multimodal Bayesiana Tardía combinando bioimpedancia (70\%), biomarcadores metabólicos (15\%) y hallazgos físicos (15\%); (4) Model Zoo optimizado con XGBoost y VITA-Net 1D en MindSpore Lite (Ascend 310) que alcanza \textbf{95.24\% de sensibilidad en carcinoma con latencia de 4.2~ms}; (5) Cuantificación de incertidumbre diagnóstica mediante el índice CUI para evitar descartes erróneos en casos atípicos; y (6) Sincronización segura con Huawei Cloud (ModelArts, DCS, RDS con cifrado KMS bajo RTS 11.03.04:23) para tecnovigilancia y re-entrenamiento federado continuo.
+El presente reporte establece formalmente cómo la \textbf{plataforma analítica y de software desarrollada en este repositorio complementa la adquisición física de la señal}. Mientras la sonda de hardware inyecta microcorrientes alternas inocuas y digitaliza la respuesta dieléctrica tisular, la plataforma de software actúa como el \textbf{motor de inteligencia clínica, control de calidad y triaje en 6 etapas}: (1) Validación en tiempo real del contacto piel-electrodo mediante el índice SQI (\textit{Signal Quality Index}); (2) Extracción biofísica automatizada de parámetros de dispersión Cole-Cole; (3) Fusión Multimodal Bayesiana Tardía combinando bioimpedancia (70\%), biomarcadores metabólicos (15\%, exactitud CV 72.41\%) y hallazgos morfológicos/citológicos (15\%, exactitud CV 97.36\%); (4) Model Zoo optimizado con XGBoost, Ensamble Multimodelo y VITA-Net 1D que alcanza \textbf{90.48\% de sensibilidad y 96.47\% de especificidad en detección de carcinoma mamario, con 83.96\% de exactitud en triaje BI-RADS de 3 niveles}; (5) Cuantificación de incertidumbre diagnóstica mediante el índice CUI para evitar descartes erróneos en casos atípicos; y (6) Sincronización transaccional con Huawei Cloud (ModelArts, DCS, RDS con integridad criptográfica SHA-256 bajo RTS 11.03.04:23) para tecnovigilancia y re-entrenamiento federado continuo.
 \end{wordcallout}
 
 \vspace{0.2cm}
@@ -494,20 +495,21 @@ Se implementó un Model Zoo comparativo para equilibrar sensibilidad y latencia 
 \begin{table}[H]
 \centering
 \small
-\caption{Rendimiento comparativo del Model Zoo clínico VITA-ES ($k=5$ Stratified Cross-Validation).}
+\caption{Rendimiento comparativo verificable del Model Zoo clínico VITA-ES ($k=5$ Stratified Cross-Validation, $N=106$).}
 \label{tab:model_zoo}
 \renewcommand{\arraystretch}{1.25}
 \resizebox{\columnwidth}{!}{
-\begin{tabular}{l c c c c c}
+\begin{tabular}{l c c c c c c}
 \rowcolor{tableheader}
-\textcolor{white}{\textbf{Modelo Clasificador}} & \textcolor{white}{\textbf{Exactitud (\%)}} & \textcolor{white}{\textbf{Bal. Acc. (\%)}} & \textcolor{white}{\textbf{F1 Macro}} & \textcolor{white}{\textbf{Sensibilidad Ca. (\%)}} & \textcolor{white}{\textbf{Latencia Edge (ms)}} \\
+\textcolor{white}{\textbf{Modelo Clasificador}} & \textcolor{white}{\textbf{Acc. 6 Clases (\%)}} & \textcolor{white}{\textbf{Triaje BI-RADS (\%)}} & \textcolor{white}{\textbf{F1 Macro}} & \textcolor{white}{\textbf{Sensibilidad Ca. (\%)}} & \textcolor{white}{\textbf{Especificidad Ca. (\%)}} & \textcolor{white}{\textbf{Latencia (ms)}} \\
 \toprule
-\textbf{Balanced Random Forest} & $77.36 \pm 4.2$ & $78.43$ & $0.7612$ & $85.71$ & $4.18$ \\
+\textbf{XGBoost (Campeón)} & $\mathbf{71.70}$ & $\mathbf{83.96}$ & $\mathbf{0.7004}$ & $\mathbf{90.48}$ & $\mathbf{96.47}$ & $\mathbf{0.21}$ \\
 \rowcolor{tablezebra}
-\textbf{SVM (Kernel RBF)} & $73.58 \pm 5.1$ & $74.20$ & $0.7250$ & $80.95$ & $\mathbf{0.17}$ \\
-\textbf{XGBoost (Campeón)} & $\mathbf{83.02} \pm 3.8$ & $\mathbf{84.55}$ & $\mathbf{0.8415}$ & $\mathbf{95.24}$ & $2.66$ \\
+\textbf{Ensamble Multimodelo} & $70.75$ & $82.08$ & $0.6849$ & $\mathbf{90.48}$ & $95.29$ & $5.75$ \\
+\textbf{VITA-Net 1D (CNN)} & $68.87$ & $78.30$ & $0.6644$ & $80.95$ & $95.29$ & $44.50$ \\
 \rowcolor{tablezebra}
-\textbf{VITA-Net 1D (CNN)} & $78.30 \pm 4.9$ & $79.12$ & $0.7780$ & $90.48$ & $5.12$ \\
+\textbf{Balanced Random Forest} & $67.92$ & $80.19$ & $0.6611$ & $85.71$ & $94.12$ & $5.20$ \\
+\textbf{SVM (Kernel RBF)} & $60.38$ & $73.58$ & $0.5291$ & $85.71$ & $95.29$ & $0.31$ \\
 \bottomrule
 \end{tabular}
 }

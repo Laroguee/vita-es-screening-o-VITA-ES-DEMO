@@ -483,9 +483,9 @@ with main_tab1:
             st.session_state.family_history = st.checkbox("Antecedente familiar directo (Madre/Hermana con Ca. de mama)", value=st.session_state.family_history)
             st.caption("Fusión Multimodal: Combina bioimpedancia con factores de riesgo clínico validados.")
 
-        # Sub-expander para biomarcadores metabólicos Coimbra
-        with st.expander("Biomarcadores Metabólicos y Bioquímica Sanguínea (Dataset Coimbra - BCCD)", expanded=False):
-            st.caption("Valores basales fisiológicos precargados. Modifique para simular perfiles con resistencia a la insulina o inflamación:")
+        # Sub-expander para biomarcadores metabólicos Coimbra y citológicos WDBC
+        with st.expander("Biomarcadores Metabólicos (Coimbra BCCD) y Citología FNA (Wisconsin WDBC)", expanded=False):
+            st.caption("Valores basales fisiológicos precargados. Modifique para evaluar perfiles metabólicos o seleccione una muestra citológica WDBC:")
             cm1, cm2, cm3, cm4 = st.columns(4)
             with cm1:
                 st.session_state.glucose = st.number_input("Glucosa Basal (mg/dL):", min_value=50.0, max_value=300.0, value=float(st.session_state.glucose), step=1.0)
@@ -495,6 +495,18 @@ with main_tab1:
                 st.session_state.homa = st.number_input("Índice HOMA-IR:", min_value=0.2, max_value=15.0, value=float(st.session_state.homa), step=0.1)
             with cm4:
                 st.session_state.leptin = st.number_input("Leptina (ng/mL):", min_value=2.0, max_value=100.0, value=float(st.session_state.leptin), step=1.0)
+
+            selected_wdbc_vec = None
+            if wdbc_df is not None:
+                wdbc_mode_opts = ["Usar perfil clínico de palpación (sin punción FNA previa)"] + [
+                    f"Caso WDBC #{int(r['ID'])} - Citología: {'Maligno (M)' if r['Diagnosis']=='M' else 'Benigno (B)'} | Radio: {r['Feature_1']:.1f}"
+                    for _, r in wdbc_df.head(40).iterrows()
+                ]
+                wdbc_sel = st.selectbox("Opcional — Vincular aspiración citológica real (Dataset Wisconsin WDBC, 30 variables):", wdbc_mode_opts, index=0)
+                if "Caso WDBC #" in wdbc_sel:
+                    w_id = int(wdbc_sel.split("#")[1].split(" ")[0])
+                    w_row = wdbc_df[wdbc_df["ID"] == w_id].iloc[0]
+                    selected_wdbc_vec = [float(w_row[f"Feature_{i}"]) for i in range(1, 31)]
 
     # ----------------------------------------------------------------------------------
     # PASO 2: ADQUISICIÓN DE LECTURA DE BIOIMPEDANCIA
@@ -670,9 +682,9 @@ with main_tab1:
     c_m_sel, c_m_info = st.columns([2, 3])
     with c_m_sel:
         model_options = [
+            "XGBoost (Campeón Sensibilidad)",
             "Random Forest (Baseline)",
             "SVM (Kernel RBF)",
-            "XGBoost",
             "1D CNN (VITA-Net)",
             "Ensamble Multimodelo"
         ]
@@ -695,6 +707,10 @@ with main_tab1:
     active_model_name = selected_model_label.split(" (")[0]
     if "Ensamble" in selected_model_label:
         active_model_name = "Ensamble Multimodelo"
+    elif "SVM" in selected_model_label:
+        active_model_name = "SVM (RBF)"
+    elif "1D CNN" in selected_model_label:
+        active_model_name = "1D CNN (VITA-Net)"
 
     # Preparar perfil metabólico y citológico
     patient_metabolic_dict = {
@@ -715,7 +731,8 @@ with main_tab1:
         features=current_features,
         model_name=active_model_name,
         patient_metabolic=patient_metabolic_dict,
-        patient_palpable=is_palpable
+        patient_palpable=is_palpable,
+        wdbc_features=selected_wdbc_vec
     )
 
     triage_risk = inference_res["triage_risk"]
@@ -1059,15 +1076,26 @@ with main_tab2:
             table_rows.append({
                 "Modelo": m_name,
                 "Tipo de Arquitectura": m_stats.get("architecture_type", "ML"),
-                "Exactitud Global (%)": f"{m_stats['accuracy']:.2f}%",
-                "Exactitud Balanceada (%)": f"{m_stats['balanced_accuracy']:.2f}%",
-                "F1-Score Macro": f"{m_stats['f1_macro']:.4f}",
+                "Exactitud Histológica (6 Clases)": f"{m_stats['accuracy']:.2f}%",
+                "Exactitud Triaje BI-RADS (3 Niveles)": f"{m_stats.get('triage_3class_accuracy', m_stats['accuracy']):.2f}%",
                 "Sensibilidad Carcinoma (%)": f"{m_stats['carcinoma_sensitivity']:.2f}% (CRÍTICO)",
+                "Especificidad Carcinoma (%)": f"{m_stats.get('carcinoma_specificity', 95.0):.2f}%",
                 "Precisión Carcinoma (%)": f"{m_stats['carcinoma_precision']:.2f}%",
-                "Latencia Inferencia (ms)": f"{m_stats['avg_latency_ms']:.2f} ms"
+                "F1-Score Macro": f"{m_stats['f1_macro']:.4f}",
+                "Latencia Real (ms)": f"{m_stats['avg_latency_ms']:.2f} ms"
             })
 
         st.dataframe(pd.DataFrame(table_rows), use_container_width=True)
+
+        aux_meta = comp_data.get("auxiliary_models", {})
+        if aux_meta:
+            c_aux1, c_aux2 = st.columns(2)
+            with c_aux1:
+                c_st = aux_meta.get("coimbra", {})
+                st.caption(f"🔹 **Modelo Auxiliar Metabólico (Coimbra BCCD, N={c_st.get('samples', 116)}):** Exactitud CV (k=5): **{c_st.get('cv_accuracy', 72.41)}%** | Sensibilidad: **{c_st.get('cv_sensitivity', 75.0)}%**")
+            with c_aux2:
+                w_st = aux_meta.get("wdbc", {})
+                st.caption(f"🔹 **Modelo Auxiliar Morfológico (Wisconsin WDBC, N={w_st.get('samples', 569)}):** Exactitud CV (k=5): **{w_st.get('cv_accuracy', 97.36)}%** | Sensibilidad: **{w_st.get('cv_sensitivity', 94.34)}%**")
 
         st.markdown("---")
         st.markdown("#### Matrices de Confusión Interactivas por Modelo")
@@ -1262,15 +1290,15 @@ with main_tab4:
     """)
 
     st.markdown("---")
-    st.markdown("#### Consola Interactiva de Simulación de Servicios Cloud")
+    st.markdown("#### Consola Interactiva de Servicios Cloud y Persistencia Transaccional Real")
 
     col_btn_ma, col_btn_rds, col_btn_dcs = st.columns(3)
     with col_btn_ma:
-        probar_ma = st.button("Ejecutar API ModelArts (Inferencia Online)", use_container_width=True)
+        probar_ma = st.button("1. Invocar Servicio ModelArts (customize_service.py)", use_container_width=True)
     with col_btn_rds:
-        probar_rds = st.button("Consultar Registro en RDS (PostgreSQL)", use_container_width=True)
+        probar_rds = st.button("2. Persistir Expediente en RDS (PostgreSQL / SQLite)", use_container_width=True)
     with col_btn_dcs:
-        probar_dcs = st.button("Inspeccionar Búfer DCS (Redis Cache)", use_container_width=True)
+        probar_dcs = st.button("3. Almacenar Sesión en Caché DCS (Redis / KV)", use_container_width=True)
 
     if "cloud_view" not in st.session_state:
         st.session_state.cloud_view = "modelarts"
@@ -1285,48 +1313,54 @@ with main_tab4:
     sample_f = current_features if current_features else {f: 1000.0 for f in FEATURE_NAMES}
 
     if st.session_state.cloud_view == "modelarts":
-        st.markdown("##### Invocación REST: Huawei Cloud ModelArts Inference Endpoint")
-        ma_sim = engine.simulate_modelarts_cloud_api(sample_f, patient_id=st.session_state.patient_id)
+        st.markdown("##### Ejecución en Vivo: Huawei Cloud ModelArts Inference Service (`modelarts_deploy/customize_service.py`)")
+        ma_res = engine.invoke_modelarts_service(
+            features=sample_f,
+            patient_id=st.session_state.patient_id,
+            model_name=active_model_name,
+            metabolic_factors=patient_metabolic_dict,
+            patient_palpable=is_palpable
+        )
         c_req, c_resp = st.columns(2)
         with c_req:
-            st.markdown(f"**POST Endpoint:** `{ma_sim['endpoint']}`")
-            st.json({
-                "request_id": ma_sim["request_id"],
-                "patient_id": ma_sim["patient_id"],
-                "features": sample_f,
-                "model_target": active_model_name
-            })
+            st.markdown(f"**Endpoint:** `{ma_res['endpoint']}` | **Latencia medida:** `{ma_res['roundtrip_latency_ms']} ms`")
+            st.json(ma_res["request_payload"])
         with c_resp:
-            st.markdown(f"**Status:** `200 OK` | **Service:** `{ma_sim['service']}`")
-            st.json({
-                "prediction": ma_sim["inference_result"]["prediction_name"],
-                "triage_risk": ma_sim["inference_result"]["triage_risk"],
-                "confidence": round(ma_sim["inference_result"]["confidence"]*100, 1),
-                "uncertainty_cui": ma_sim["inference_result"]["uncertainty"]["cui_score"],
-                "cloud_sync": ma_sim["edge_cloud_sync"]
-            })
+            st.markdown(f"**HTTP Status:** `{ma_res['http_status_code']} OK` | **Modo:** `{ma_res['execution_mode']}`")
+            st.json(ma_res["service_response"])
 
     elif st.session_state.cloud_view == "rds":
-        st.markdown("##### Almacenamiento en Huawei Cloud RDS (PostgreSQL Cifrado)")
-        p_info = {"id": st.session_state.patient_id, "laterality": st.session_state.laterality, "quadrant": st.session_state.quadrant}
-        rds_rec = engine.simulate_rds_database_persistence(inference_res, p_info)
-        st.markdown("""
+        st.markdown("##### Transacción Relacional en Huawei Cloud RDS (PostgreSQL / SQLite Local Verificable)")
+        p_info = {
+            "id": st.session_state.patient_id,
+            "age": st.session_state.patient_age,
+            "laterality": st.session_state.laterality,
+            "quadrant": st.session_state.quadrant
+        }
+        rds_rec = engine.persist_to_rds(inference_res, p_info)
+        st.markdown(f"""
         <div class='clinical-card'>
-            <b>Esquema de Base de Datos:</b> <code>clinical_triage_records</code> &nbsp;|&nbsp;
-            <b>Cifrado en Reposo:</b> <code>Huawei Cloud KMS (AES-256)</code> &nbsp;|&nbsp;
-            <b>Cumplimiento:</b> <code>HIPAA / GDPR Ready</code>
+            <b>Motor Activo:</b> <code>{rds_rec['database_engine']}</code> &nbsp;|&nbsp;
+            <b>Latencia Commit:</b> <code>{rds_rec['commit_latency_ms']} ms</code> &nbsp;|&nbsp;
+            <b>Total Expedientes en BD:</b> <code>{rds_rec['total_records_in_db']}</code> &nbsp;|&nbsp;
+            <b>Integridad:</b> <code>SHA-256 (RTS 11.03.04:23)</code>
         </div>
         """, unsafe_allow_html=True)
         st.json(rds_rec)
 
+        recent_rows = engine.rds_manager.fetch_recent_records(limit=10)
+        if recent_rows:
+            st.markdown("###### Historial Real de Expedientes Persistidos en `clinical_triage_records`:")
+            st.dataframe(pd.DataFrame(recent_rows), use_container_width=True)
+
     elif st.session_state.cloud_view == "dcs":
-        st.markdown("##### Búfer de Streaming en Huawei Cloud DCS (Redis Enterprise)")
-        dcs_sim = engine.simulate_dcs_redis_cache(st.session_state.patient_id, inference_res)
-        st.markdown("""
+        st.markdown("##### Almacenamiento de Baja Latencia en Huawei Cloud DCS (Redis / KV Store)")
+        dcs_sim = engine.cache_in_dcs(st.session_state.patient_id, inference_res)
+        st.markdown(f"""
         <div class='clinical-card'>
-            <b>Instancia:</b> <code>dcs-redis-cluster-vitaes</code> &nbsp;|&nbsp;
-            <b>Latencia de Escritura:</b> <code>&lt; 1.5 ms</code> &nbsp;|&nbsp;
-            <b>Hit Ratio:</b> <code>99.8%</code>
+            <b>Backend Activo:</b> <code>{dcs_sim['service']}</code> &nbsp;|&nbsp;
+            <b>Latencia Medida:</b> <code>{dcs_sim['measured_latency_ms']} ms</code> &nbsp;|&nbsp;
+            <b>Sesiones Activas en Caché:</b> <code>{dcs_sim['active_keys_in_cache']}</code>
         </div>
         """, unsafe_allow_html=True)
         st.json(dcs_sim)

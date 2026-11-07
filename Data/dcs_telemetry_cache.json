@@ -1,0 +1,15 @@
+{
+  "vita:dcs:screening:PAC-SV-0001": {
+    "patient_id": "PAC-SV-0001",
+    "triage_risk": "ALTO RIESGO",
+    "birads_category": "BI-RADS 4/5 (Sospechoso de Malignidad)",
+    "prediction_name": "Carcinoma",
+    "confidence": 0.9683,
+    "cui_score": 8.4,
+    "uncertainty_level": "Baja (Certeza Alta)",
+    "model_used": "XGBoost",
+    "stored_at_epoch": 1794023766.974425,
+    "expires_at_epoch": 1794027366.974425,
+    "timestamp": "2026-11-07T03:56:06.974425+00:00"
+  }
+}

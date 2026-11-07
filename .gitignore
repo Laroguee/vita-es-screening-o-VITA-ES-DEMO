@@ -28,3 +28,8 @@ desktop.ini
 # IDE settings
 .vscode/
 .idea/
+
+# Local working documents and blank competition templates
+StartupSTEM2026*.pdf
+*Area - Team Name.docx
+~$*.docx

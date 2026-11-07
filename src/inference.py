@@ -1,15 +1,16 @@
 """
-Motor de Inferencia y Simulación de Integración con Huawei Cloud (ModelArts, DCS, RDS)
-Proyecto VITA-ES | Huawei ICT Competition 2026-2027
+Motor de Inferencia y Conector con Huawei Cloud Suite (ModelArts, DCS, RDS)
+Proyecto VITA-ES | 11th Huawei ICT Competition 2026-2027
 
-Soporta inferencia multimodelo:
-- Random Forest (Baseline)
+Soporta inferencia multimodelo 100% verificable:
+- Random Forest (Baseline Balanceado)
 - SVM (Kernel RBF Calibrado)
-- XGBoost Classifier
+- XGBoost Classifier (Modelo Campeón en Sensibilidad Oncológica)
 - 1D CNN (VITA-Net 1D)
-- Ensamble Multimodelo
+- Ensamble Multimodelo (Votación Suave Ponderada)
 - Cuantificación de Incertidumbre Clínica (CUI)
-- Fusión Multimodal con Datasets Coimbra (Metabólico) y WDBC (Morfológico)
+- Fusión Multimodal Real con Datasets Coimbra (Metabólico) y WDBC (Morfológico)
+- Persistencia Transaccional en Huawei Cloud RDS (PostgreSQL / SQLite local) y DCS (Redis / KV Cache)
 """
 
 import json
@@ -33,24 +34,31 @@ try:
 except Exception:
     HAS_KERAS = False
 
+try:
+    import onnxruntime as ort
+    HAS_ONNXRUNTIME = True
+except Exception:
+    HAS_ONNXRUNTIME = False
+
 # Imports del proyecto
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from data_loader import CLASS_MAPPING, FEATURE_NAMES
 from feature_extraction import extract_features_from_sweep, fit_cole_circle, validate_features
 from uncertainty import compute_uncertainty_metrics
+from cloud_services import HuaweiDCSManager, HuaweiModelArtsClient, HuaweiRDSManager
 
 
 class EISInferenceEngine:
     """
     Motor clínico de inferencia de espectroscopía de bioimpedancia eléctrica (EIS)
-    con soporte para inferencia Edge (MindSpore Lite), Cloud (Huawei ModelArts),
-    cuantificación de incertidumbre diagnóstica y fusión multimodal.
+    con soporte para inferencia Edge, Cloud (Huawei ModelArts, RDS, DCS),
+    cuantificación de incertidumbre diagnóstica y fusión multimodal real.
     """
 
     AVAILABLE_MODELS = [
+        "XGBoost",
         "Random Forest",
         "SVM (RBF)",
-        "XGBoost",
         "1D CNN (VITA-Net)",
         "Ensamble Multimodelo"
     ]
@@ -58,17 +66,24 @@ class EISInferenceEngine:
     def __init__(self, models_dir: str = "models"):
         self.models_dir = models_dir
         self.models: Dict[str, Any] = {}
+        self.onnx_sessions: Dict[str, Any] = {}
         self.scaler = None
         self.label_encoder = None
         self.metadata = None
         self.comparison_metadata = None
-        
+
         # Modelos auxiliares multimodales
         self.model_coimbra = None
         self.scaler_coimbra = None
         self.model_wdbc = None
         self.scaler_wdbc = None
-        
+        self.wdbc_profiles: Dict[str, Any] = {}
+
+        # Clientes reales de infraestructura Huawei Cloud / Local Resiliente
+        self.rds_manager = HuaweiRDSManager()
+        self.dcs_manager = HuaweiDCSManager()
+        self.modelarts_client = HuaweiModelArtsClient()
+
         self._load_artifacts()
 
     def _resolve_path(self, filename: str) -> Optional[str]:
@@ -82,7 +97,7 @@ class EISInferenceEngine:
         return None
 
     def _load_artifacts(self):
-        """Carga los modelos entrenados, escaladores y metadatos."""
+        """Carga los modelos entrenados, sesiones ONNX, escaladores y metadatos."""
         scaler_p = self._resolve_path("scaler.pkl")
         if not scaler_p:
             raise FileNotFoundError(
@@ -91,28 +106,34 @@ class EISInferenceEngine:
             )
         self.scaler = joblib.load(scaler_p)
 
-        # Cargar Random Forest
         rf_p = self._resolve_path("model_rf.pkl") or self._resolve_path("model.pkl")
         if rf_p:
             self.models["Random Forest"] = joblib.load(rf_p)
 
-        # Cargar SVM
         svm_p = self._resolve_path("model_svm.pkl")
         if svm_p:
             self.models["SVM (RBF)"] = joblib.load(svm_p)
 
-        # Cargar XGBoost
         xgb_p = self._resolve_path("model_xgb.pkl")
         if xgb_p:
             self.models["XGBoost"] = joblib.load(xgb_p)
 
-        # Cargar 1D CNN (Keras)
         cnn_p = self._resolve_path("model_cnn1d.keras")
         if cnn_p and HAS_KERAS:
             try:
                 self.models["1D CNN (VITA-Net)"] = keras.models.load_model(cnn_p)
             except Exception as e:
                 print(f"[!] Aviso: no se pudo cargar el modelo CNN 1D: {e}")
+
+        # Cargar sesiones ONNX si onnxruntime está disponible
+        if HAS_ONNXRUNTIME:
+            for m_key, onnx_rel in [("Random Forest", "onnx/model_rf.onnx"), ("SVM (RBF)", "onnx/model_svm.onnx")]:
+                onnx_p = self._resolve_path(onnx_rel)
+                if onnx_p:
+                    try:
+                        self.onnx_sessions[m_key] = ort.InferenceSession(onnx_p)
+                    except Exception:
+                        pass
 
         # Cargar modelos auxiliares Coimbra y WDBC
         coimbra_p = self._resolve_path("model_coimbra.pkl")
@@ -127,11 +148,11 @@ class EISInferenceEngine:
             self.model_wdbc = joblib.load(wdbc_p)
             self.scaler_wdbc = joblib.load(scaler_wdbc_p)
 
-        # Metadatos comparativos
         comp_p = self._resolve_path("models_comparison.json")
         if comp_p:
             with open(comp_p, "r", encoding="utf-8") as f:
                 self.comparison_metadata = json.load(f)
+                self.wdbc_profiles = self.comparison_metadata.get("auxiliary_models", {}).get("wdbc", {})
 
         meta_p = self._resolve_path("metadata.json")
         if meta_p:
@@ -152,9 +173,9 @@ class EISInferenceEngine:
         if model_name == "Ensamble Multimodelo":
             accum_probs = np.zeros(num_classes)
             weights = {
-                "Random Forest": 0.35,
-                "SVM (RBF)": 0.25,
-                "XGBoost": 0.25,
+                "XGBoost": 0.40,
+                "Random Forest": 0.30,
+                "SVM (RBF)": 0.15,
                 "1D CNN (VITA-Net)": 0.15
             }
             total_weight = 0.0
@@ -172,28 +193,58 @@ class EISInferenceEngine:
                 X_cnn = scaled_features.reshape((1, len(FEATURE_NAMES), 1))
                 probs = self.models["1D CNN (VITA-Net)"].predict(X_cnn, verbose=0)[0]
                 return probs
-            elif "Random Forest" in self.models:
-                return self.models["Random Forest"].predict_proba(scaled_features)[0]
+            elif "XGBoost" in self.models:
+                return self.models["XGBoost"].predict_proba(scaled_features)[0]
 
         target_model = self.models.get(model_name)
         if target_model is None:
-            # Fallback a Random Forest
-            target_model = self.models.get("Random Forest") or list(self.models.values())[0]
+            target_model = self.models.get("XGBoost") or self.models.get("Random Forest") or list(self.models.values())[0]
 
         return target_model.predict_proba(scaled_features)[0]
+
+    def evaluate_wdbc_morphology(
+        self,
+        wdbc_features: Optional[Union[List[float], np.ndarray]] = None,
+        patient_palpable: bool = False
+    ) -> Tuple[float, str]:
+        """
+        Ejecuta el clasificador real entrenado sobre el dataset Wisconsin WDBC (model_wdbc.pkl):
+        - Si se proporciona un vector citológico de 30 características de un caso FNA, lo evalúa directamente.
+        - Si solo se cuenta con la exploración física (nódulo palpable vs. asintomática), evalúa el modelo
+          sobre los perfiles empíricos derivados de la cohorte WDBC (N=569).
+        """
+        if self.model_wdbc is not None and self.scaler_wdbc is not None:
+            if wdbc_features is not None and len(wdbc_features) == 30:
+                vec = np.array([wdbc_features], dtype=np.float64)
+                source = "WDBC FNA Cytology Model (30 variables)"
+            elif patient_palpable and self.wdbc_profiles.get("palpable_suspicious_profile"):
+                vec = np.array([self.wdbc_profiles["palpable_suspicious_profile"]], dtype=np.float64)
+                source = "WDBC Model (Perfil Nódulo Palpable)"
+            elif self.wdbc_profiles.get("benign_centroid"):
+                vec = np.array([self.wdbc_profiles["benign_centroid"]], dtype=np.float64)
+                source = "WDBC Model (Perfil Basal Asintomático)"
+            else:
+                return (0.55 if patient_palpable else 0.08), "Prior Clínico"
+
+            scaled = self.scaler_wdbc.transform(vec)
+            prob_malignant = float(self.model_wdbc.predict_proba(scaled)[0, 1])
+            return prob_malignant, source
+
+        return (0.55 if patient_palpable else 0.08), "Prior Clínico"
 
     def predict(
         self,
         features: Dict[str, float],
-        model_name: str = "Random Forest",
+        model_name: str = "XGBoost",
         patient_metabolic: Optional[Dict[str, float]] = None,
-        patient_palpable: bool = False
+        patient_palpable: bool = False,
+        wdbc_features: Optional[Union[List[float], np.ndarray]] = None
     ) -> Dict[str, Any]:
         """
-        Ejecuta la inferencia diagnóstica completa:
+        Ejecuta la inferencia diagnóstica completa con medición de latencia real:
         1. Inferencia bioeléctrica con el modelo seleccionado (o Ensamble).
         2. Cuantificación de incertidumbre clínica (CUI, Entropía Shannon, Margen).
-        3. Fusión multimodal con riesgo metabólico (Coimbra) y morfológico (WDBC).
+        3. Fusión multimodal real ejecutando los modelos Coimbra (BCCD) y Wisconsin (WDBC).
         4. Dictamen médico estructurado con semáforo de riesgo y protocolo BI-RADS.
         """
         t0 = time.perf_counter()
@@ -202,13 +253,16 @@ class EISInferenceEngine:
         is_valid, validation_errors = validate_features(features)
 
         # 2. Vector de características escalado
-        feature_vector = np.array([[float(features.get(f, 0.0)) for f in FEATURE_NAMES]])
+        feature_vector = np.array([[float(features.get(f, 0.0)) for f in FEATURE_NAMES]], dtype=np.float64)
         scaled_vector = self.scaler.transform(feature_vector)
 
-        # 3. Probabilidades del modelo seleccionado
+        # 3. Probabilidades del modelo seleccionado y medición de latencia pura del modelo
+        t_mod0 = time.perf_counter()
         probs = self._get_model_probabilities(model_name, scaled_vector)
-        classes = self.metadata.get("classes", ["adi", "car", "con", "fad", "gla", "mas"])
+        t_mod1 = time.perf_counter()
+        pure_model_latency_ms = (t_mod1 - t_mod0) * 1000.0
 
+        classes = self.metadata.get("classes", ["adi", "car", "con", "fad", "gla", "mas"])
         prob_dict = {cls: float(probs[i]) for i, cls in enumerate(classes)}
 
         pred_idx = int(np.argmax(probs))
@@ -218,16 +272,14 @@ class EISInferenceEngine:
         # 4. Cuantificación de Incertidumbre Diagnóstica Clínica (UQ)
         uncertainty = compute_uncertainty_metrics(probs, classes)
 
-        # 5. Fusión Multimodal (EIS 70% + Coimbra 15% + WDBC 15%)
-        # Probabilidades primarias EIS por nivel de riesgo
+        # 5. Fusión Multimodal Bayesiana (EIS 70% + Coimbra 15% + WDBC 15%)
         car_prob = prob_dict.get("car", 0.0)
         fad_prob = prob_dict.get("fad", 0.0)
         mas_prob = prob_dict.get("mas", 0.0)
         benign_prob = fad_prob + mas_prob
-        healthy_prob = 1.0 - (car_prob + benign_prob)
 
-        # Riesgo metabólico (Dataset Coimbra)
-        metabolic_risk_prob = 0.20  # Nivel basal estándar en población general
+        # Riesgo metabólico real (Dataset Coimbra)
+        metabolic_risk_prob = 0.20
         if patient_metabolic and self.model_coimbra and self.scaler_coimbra:
             try:
                 coimbra_cols = ["Age", "BMI", "Glucose", "Insulin", "HOMA", "Leptin", "Adiponectin", "Resistin", "MCP.1"]
@@ -237,23 +289,19 @@ class EISInferenceEngine:
             except Exception:
                 metabolic_risk_prob = 0.25
 
-        # Riesgo morfológico / citológico (Dataset WDBC)
-        morphological_risk_prob = 0.15
-        if patient_palpable:
-            # Si hay un nódulo palpable en la mama, la sospecha morfológica basal aumenta
-            morphological_risk_prob = 0.65
-
-        # Ponderación Multimodal Bayesiana:
-        # EIS (70%) + Metabólico Coimbra (15%) + Hallazgo Morfológico (15%)
-        fused_malignancy_risk = (
-            0.70 * car_prob +
-            0.15 * metabolic_risk_prob +
-            0.15 * morphological_risk_prob
+        # Riesgo morfológico / citológico real (Dataset WDBC)
+        morphological_risk_prob, wdbc_source = self.evaluate_wdbc_morphology(
+            wdbc_features=wdbc_features,
+            patient_palpable=patient_palpable
         )
-        fused_malignancy_risk = float(np.clip(fused_malignancy_risk, 0.0, 1.0))
+
+        fused_malignancy_risk = float(np.clip(
+            0.70 * car_prob + 0.15 * metabolic_risk_prob + 0.15 * morphological_risk_prob,
+            0.0,
+            1.0
+        ))
 
         # 6. Reglas de Triaje Clínico Oncológico VITA-ES
-        # Umbral sensible para priorizar detección temprana de carcinoma
         if fused_malignancy_risk >= 0.32 or pred_class == "car":
             triage_risk = "ALTO RIESGO"
             triage_code = 2
@@ -291,7 +339,6 @@ class EISInferenceEngine:
             )
             final_risk_score = max(0.05, car_prob * 0.8)
 
-        # Si la incertidumbre es crítica, elevar advertencia clínica
         if uncertainty["requires_second_opinion"]:
             clinical_action = (
                 "ALERTA: DICTAMEN NO CONCLUYENTE (Incertidumbre elevada): La respuesta "
@@ -300,12 +347,16 @@ class EISInferenceEngine:
             )
 
         t1 = time.perf_counter()
-        inference_latency_ms = (t1 - t0) * 1000.0
+        total_pipeline_latency_ms = (t1 - t0) * 1000.0
 
-        # Simulación de Latencias Hardware Huawei
-        is_edge = model_name != "1D CNN (VITA-Net)"
-        simulated_edge_ms = round(inference_latency_ms * 0.4 + 4.2, 2)
-        simulated_cloud_ms = round(inference_latency_ms * 0.8 + 32.5, 2)
+        # Si hay sesión ONNX para el modelo, medir latencia ONNX real
+        onnx_latency_ms = None
+        if model_name in self.onnx_sessions:
+            t_ox0 = time.perf_counter()
+            sess = self.onnx_sessions[model_name]
+            in_name = sess.get_inputs()[0].name
+            sess.run(None, {in_name: scaled_vector.astype(np.float32)})
+            onnx_latency_ms = round((time.perf_counter() - t_ox0) * 1000.0, 3)
 
         class_info = CLASS_MAPPING.get(pred_class, {})
 
@@ -329,6 +380,7 @@ class EISInferenceEngine:
                 "eis_carcinoma_prob": round(float(car_prob), 3),
                 "metabolic_coimbra_prob": round(float(metabolic_risk_prob), 3),
                 "morphological_wdbc_prob": round(float(morphological_risk_prob), 3),
+                "wdbc_evaluation_source": wdbc_source,
                 "fused_risk_score": round(float(fused_malignancy_risk), 3)
             },
             "features_used": features,
@@ -337,10 +389,10 @@ class EISInferenceEngine:
                 "errors": validation_errors
             },
             "hardware_benchmark": {
-                "active_runtime": "Huawei Ascend 310 (Edge)" if is_edge else "Huawei ModelArts Cloud (Ascend 910)",
-                "edge_mindspore_latency_ms": simulated_edge_ms,
-                "cloud_modelarts_latency_ms": simulated_cloud_ms,
-                "local_python_latency_ms": round(inference_latency_ms, 2)
+                "active_runtime": "ONNX Runtime + Python 3.12" if onnx_latency_ms is not None else "Python 3.12 Native Engine",
+                "pure_model_latency_ms": round(pure_model_latency_ms, 3),
+                "onnx_runtime_latency_ms": onnx_latency_ms,
+                "local_python_latency_ms": round(total_pipeline_latency_ms, 2)
             },
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
@@ -348,16 +400,11 @@ class EISInferenceEngine:
     def predict_from_sweep(
         self,
         sweep_df: pd.DataFrame,
-        model_name: str = "Random Forest",
+        model_name: str = "XGBoost",
         patient_metabolic: Optional[Dict[str, float]] = None,
         patient_palpable: bool = False
     ) -> Tuple[Dict[str, Any], Dict[str, float], Dict[str, Any]]:
-        """
-        Flujo de inferencia completo a partir de una tabla de barrido espectral:
-        1. Extrae las 9 características biofísicas canónicas de Cole-Cole.
-        2. Ejecuta la inferencia multimodelo con métricas de incertidumbre.
-        3. Evalúa la calidad de señal y contacto del sensor (SQI).
-        """
+        """Flujo completo a partir de una tabla de barrido espectral."""
         features = extract_features_from_sweep(sweep_df)
         z_re = sweep_df["Z_Real"].values
         z_im = sweep_df["Minus_Z_Imag"].values if "Minus_Z_Imag" in sweep_df.columns else -sweep_df["Z_Imag"].values
@@ -370,61 +417,43 @@ class EISInferenceEngine:
         )
         return inference_result, features, cole_fit
 
-    # Métodos de compatibilidad y simulación Cloud
+    # Conectores reales hacia Huawei Cloud Suite / Persistencia Local
+    def invoke_modelarts_service(
+        self,
+        features: Dict[str, float],
+        patient_id: str = "PAC-HUAWEI-001",
+        model_name: str = "XGBoost",
+        metabolic_factors: Optional[Dict[str, float]] = None,
+        patient_palpable: bool = False
+    ) -> Dict[str, Any]:
+        """Invoca el servicio real de ModelArts (remoto o modelarts_deploy/customize_service.py)."""
+        return self.modelarts_client.invoke_inference(
+            features=features,
+            patient_id=patient_id,
+            model_name=model_name,
+            metabolic_factors=metabolic_factors,
+            patient_palpable=patient_palpable
+        )
+
+    def persist_to_rds(self, inference_result: Dict[str, Any], patient_metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """Inserta un registro transaccional real en Huawei Cloud RDS (PostgreSQL) o SQLite local."""
+        return self.rds_manager.insert_triage_record(inference_result, patient_metadata)
+
+    def cache_in_dcs(self, patient_id: str, inference_result: Dict[str, Any]) -> Dict[str, Any]:
+        """Almacena la sesión en caché en Huawei Cloud DCS (Redis) o KV Store local midiendo latencia real."""
+        return self.dcs_manager.cache_screening_session(patient_id, inference_result)
+
+    # Alias de compatibilidad hacia atrás
     def simulate_modelarts_cloud_api(self, features: Dict[str, float], patient_id: str = "PAT-HUAWEI-001") -> Dict[str, Any]:
-        """Simula la respuesta HTTP 200 de Huawei Cloud ModelArts REST API."""
-        result = self.predict(features)
-        return {
-            "status": "success",
-            "http_status_code": 200,
-            "service": "Huawei Cloud ModelArts Inference API",
-            "endpoint": "https://apigw.cn-north-4.huaweicloudapis.com/v1/infers/vita-es-triage",
-            "request_id": f"req-{int(time.time()*1000)}-{np.random.randint(1000, 9999)}",
-            "patient_id": patient_id,
-            "inference_result": result,
-            "edge_cloud_sync": {
-                "sync_protocol": "HTTPS / TLS 1.3 / mTLS Edge-to-Cloud",
-                "dcs_cache_hit": False,
-                "rds_persisted": True
-            }
-        }
+        return self.invoke_modelarts_service(features=features, patient_id=patient_id)
 
     def simulate_rds_database_persistence(self, inference_result: Dict[str, Any], patient_metadata: Dict[str, Any]) -> Dict[str, Any]:
-        """Simula el registro relacional transaccional en Huawei Cloud RDS for PostgreSQL."""
-        record_id = f"VITA-REC-{np.random.randint(100000, 999999)}"
-        return {
-            "table": "clinical_triage_records",
-            "record_id": record_id,
-            "status": "INSERTED_COMMITTED",
-            "database_engine": "Huawei Cloud RDS for PostgreSQL v15.4",
-            "persisted_fields": {
-                "id": record_id,
-                "patient_id": patient_metadata.get("id", "PAT-DEFAULT"),
-                "laterality": patient_metadata.get("laterality", "Derecha"),
-                "quadrant": patient_metadata.get("quadrant", "CSE"),
-                "triage_risk": inference_result["triage_risk"],
-                "birads_category": inference_result["birads_category"],
-                "cui_uncertainty_score": inference_result.get("uncertainty", {}).get("cui_score", 0.0),
-                "model_used": inference_result.get("model_used", "Random Forest"),
-                "created_at": datetime.now(timezone.utc).isoformat()
-            }
-        }
+        return self.persist_to_rds(inference_result, patient_metadata)
 
     def simulate_dcs_redis_cache(self, patient_id: str, inference_result: Dict[str, Any]) -> Dict[str, Any]:
-        """Simula almacenamiento en Huawei Cloud Distributed Cache Service (DCS Redis)."""
-        cache_key = f"vita:cache:screening:{patient_id}"
-        return {
-            "service": "Huawei Cloud DCS (Distributed Cache Service for Redis)",
-            "cache_key": cache_key,
-            "status": "STORED",
-            "ttl_seconds": 3600,
-            "cached_risk": inference_result["triage_risk"],
-            "cached_uncertainty_level": inference_result.get("uncertainty", {}).get("level", "N/A"),
-            "latency_ms": 1.2
-        }
+        return self.cache_in_dcs(patient_id, inference_result)
 
 
-# Instancia singleton para importación directa
 try:
     engine = EISInferenceEngine()
 except Exception:

@@ -22,7 +22,7 @@ Las barreras estructurales que impiden el tamizaje oportuno son:
 ### 1.2. La Solución VITA-ES
 **VITA-ES** (*Vital Impedance Tomography & Assessment - Early Screening*) es un ecosistema médico de grado clínico y no invasivo que descentraliza el tamizaje mamario mediante **Espectroscopía de Bioimpedancia Eléctrica (EIS)** a multifrecuencia (15.625 kHz a 1.0 MHz), combinada con **Fusión Multimodal Bayesiana** e inferencia híbrida Edge-to-Cloud con tecnologías de **Huawei Cloud**.
 
-El sistema no busca reemplazar la biopsia histológica confirmatoria (Gold Standard), sino actuar como una **estación de triaje oportuno de alta sensibilidad (95.2%)**, clasificando el tejido mamario en tres niveles de riesgo homólogos al estándar internacional **BI-RADS (Breast Imaging Reporting and Data System)** y emitiendo un índice cuantitativo de incertidumbre clínica (**CUI**).
+El sistema no busca reemplazar la biopsia histológica confirmatoria (Gold Standard), sino actuar como una **estación de triaje oportuno de alta sensibilidad (90.48% de sensibilidad y 96.47% de especificidad en detección de carcinoma mamario, con 83.96% de exactitud en triaje BI-RADS de 3 niveles)**, clasificando el tejido mamario en tres niveles de riesgo homólogos al estándar internacional **BI-RADS (Breast Imaging Reporting and Data System)** y emitiendo un índice cuantitativo de incertidumbre clínica (**CUI**).
 
 ---
 
@@ -105,23 +105,28 @@ Los parámetros de calibración de la sonda y del emulador fueron derivados estr
 
 ## 4. Arquitectura de Machine Learning e Inteligencia Artificial
 
-### 4.1. Model Zoo Clínico (4 Arquitecturas Comparativas)
-VITA-ES no depende de una caja negra monolítica; integra un **Model Zoo de 4 clasificadores** validados mediante *Stratified K-Fold Cross Validation* ($k=5$):
+### 4.1. Model Zoo Clínico (5 Arquitecturas Comparativas Verificables)
+VITA-ES no depende de una caja negra monolítica; integra un **Model Zoo de 5 clasificadores** validados mediante *Stratified K-Fold Cross Validation* ($k=5$, reproducible al 100% ejecutando `python src/models_zoo.py`):
 
-1. **Balanced Random Forest (Baseline Clínico):**
-   * 150 árboles, profundidad balanceada para mitigar el desbalance de clases de la cohorte.
-   * Sensibilidad en Carcinoma: **85.71%**. Exactitud Balanceada: **78.43%**.
-2. **Support Vector Machine (Kernel RBF Calibrado):**
-   * Kernel gaussiano ($C=2.5, \gamma=\text{scale}$), con calibración de probabilidades de Platt.
-   * Sensibilidad en Carcinoma: **80.95%**. Alta especificidad en tejido adiposo y conectivo.
-3. **XGBoost Classifier (Modelo Campeón):**
+1. **XGBoost Classifier (Modelo Campeón en Sensibilidad Oncológica):**
    * Gradient Boosting regularizado (`max_depth=3`, `learning_rate=0.08`, `subsample=0.85`).
-   * **Sensibilidad en Carcinoma: 95.24% (Métrica Primaria)**. F1-Score Macro: **0.8415**.
-4. **VITA-Net 1D (Deep Learning Convolucional):**
-   * Arquitectura CNN 1D diseñada para espectros de impedancia: 2 bloques `Conv1D` (filtros 16 y 32, kernel=3) con `BatchNormalization`, `Dropout` adaptativo (0.2 - 0.25) y `GlobalAveragePooling1D`.
-   * Parámetros totales: **7,242** (inferencia ultraligera exportable a MindSpore Lite).
-5. **Ensamble Multimodelo:**
-   * Fusión por votación suave ponderada según la matriz de sensibilidad de cada clasificador.
+   * **Sensibilidad en Carcinoma: 90.48%** (19/21 casos detectados) | **Especificidad en Carcinoma: 96.47%** | **Precisión en Carcinoma: 86.36%**.
+   * **Exactitud en Triaje BI-RADS (3 niveles): 83.96%** | **Exactitud Histológica (6 clases): 71.70%** | **F1-Score Macro: 0.7004**.
+2. **Ensamble Multimodelo (Votación Suave Ponderada):**
+   * Fusión probabilística ponderada de los clasificadores del Model Zoo.
+   * **Sensibilidad en Carcinoma: 90.48%** | **Especificidad en Carcinoma: 95.29%** | **Exactitud en Triaje BI-RADS (3 niveles): 82.08%** | **Exactitud Histológica (6 clases): 70.75%**.
+3. **VITA-Net 1D (Deep Learning Convolucional Determinístico):**
+   * Arquitectura CNN 1D sobre vectores de espectroscopía dieléctrica: 2 bloques `Conv1D` (filtros 24 y 32, kernel=3, activación `ELU`) con `BatchNormalization`, `Flatten`, `Dropout(0.15)` y capa densa regularizada con pesos balanceados por clase.
+   * **Sensibilidad en Carcinoma: 80.95%** | **Especificidad en Carcinoma: 95.29%** | **Exactitud en Triaje BI-RADS (3 niveles): 78.30%** | **Exactitud Histológica (6 clases): 68.87%**.
+4. **Balanced Random Forest (Baseline Clínico):**
+   * 150 árboles con muestreo balanceado (`balanced_subsample`) para mitigar el desbalance de la cohorte.
+   * **Sensibilidad en Carcinoma: 85.71%** | **Especificidad en Carcinoma: 94.12%** | **Exactitud en Triaje BI-RADS (3 niveles): 80.19%** | **Exactitud Histológica (6 clases): 67.92%**.
+5. **Support Vector Machine (Kernel RBF Calibrado):**
+   * Kernel gaussiano ($C=2.5, \gamma=\text{scale}$), con calibración de probabilidades de Platt.
+   * **Sensibilidad en Carcinoma: 85.71%** | **Especificidad en Carcinoma: 95.29%** | **Exactitud en Triaje BI-RADS (3 niveles): 73.58%** | **Exactitud Histológica (6 clases): 60.38%**.
+6. **Modelos Auxiliares Multimodales ($k=5$ Stratified CV):**
+   * **Modelo Metabólico Coimbra (`dataR2.csv`, $N=116$):** Exactitud CV de **72.41%** y Sensibilidad de **75.00%**.
+   * **Modelo Morfológico Wisconsin (`wdbc.data`, $N=569$):** Exactitud CV de **97.36%** y Sensibilidad de **94.34%**.
 
 ### 4.2. Cuantificación de Incertidumbre Clínica (CUI)
 Para evitar que el algoritmo emita un falso descarte preventivo ante lecturas atípicas, VITA-ES implementa el **Clinical Uncertainty Index (CUI)**:

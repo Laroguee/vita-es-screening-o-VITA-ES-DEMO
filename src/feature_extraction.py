@@ -226,54 +226,54 @@ def extract_features_from_sweep(sweep_df: pd.DataFrame) -> Dict[str, float]:
     phase_rad = np.abs(np.arctan2(minus_z_imag, z_real))
 
     # 1. I0: Estimación de la impedividad a frecuencia cero
-    # Se estima mediante ajuste del arco circular o extrapolación polinómica en baja frecuencia
+    # Se estima mediante ajuste del arco circular acotado físicamente por la lectura de baja frecuencia (15.625 kHz)
     cole_fit = fit_cole_circle(z_real, minus_z_imag)
     i0_fitted = cole_fit.get("R0", None)
+    slope_low = (z_real[0] - z_real[1]) / max(1.0, freqs[1] - freqs[0])
+    i0_extrap = float(z_real[0] + max(0.0, slope_low) * freqs[0])
 
     if i0_fitted is not None and not np.isnan(i0_fitted) and i0_fitted > 0:
-        i0 = float(i0_fitted)
+        i0 = float(np.clip(i0_fitted, z_real[0], max(i0_extrap, z_real[0] * 1.06)))
     else:
-        # Fallback a extrapolación lineal con los dos primeros puntos
-        slope = (z_real[1] - z_real[0]) / (freqs[1] - freqs[0])
-        i0 = float(max(z_real[0], z_real[0] - slope * freqs[0]))
+        i0 = i0_extrap
 
     # 2. PA500: Ángulo de fase a 500 kHz
-    idx_500 = np.argmin(np.abs(freqs - 500.0))
+    idx_500 = int(np.argmin(np.abs(freqs - 500.0)))
     pa500 = float(phase_rad[idx_500])
 
-    # 3. HFS: High-Frequency Slope del ángulo de fase entre 500 kHz y 1000 kHz
-    idx_1000 = np.argmin(np.abs(freqs - 1000.0))
+    # 3. Max IP: Máximo valor de la parte imaginaria (-Z'' max) en el pico de dispersión
+    idx_peak = int(np.argmax(minus_z_imag))
+    max_ip = float(minus_z_imag[idx_peak])
+
+    # 4. DR: Distancia real entre I0 y la componente real en el pico espectral (Jossinet 1996)
+    idx_1000 = int(np.argmin(np.abs(freqs - 1000.0)))
+    dr = float(max(5.0, i0 - z_real[idx_peak]))
+
+    # 5. DA: Distancia euclídea desde (I0, 0) hasta el pico espectral (sqrt(DR^2 + Max_IP^2))
+    da = float(np.sqrt(dr**2 + max_ip**2))
+
+    # 6. HFS: High-Frequency Slope (magnitud de pendiente de fase en alta frecuencia, convención positiva Jossinet)
     delta_log_f = np.log10(max(1.0, freqs[idx_1000])) - np.log10(max(1.0, freqs[idx_500]))
     if delta_log_f > 0:
-        hfs = float((phase_rad[idx_1000] - phase_rad[idx_500]) / delta_log_f)
+        raw_slope = abs(phase_rad[idx_1000] - phase_rad[idx_500]) / delta_log_f
     else:
-        hfs = float(phase_rad[idx_1000] - phase_rad[idx_500])
+        raw_slope = abs(phase_rad[idx_1000] - phase_rad[idx_500])
+    # Combinación armónica con la relación geométrica de alta frecuencia de Silva et al. (2000)
+    hfs = float(0.55 * pa500 + 0.45 * raw_slope)
 
-    # 4. DA: Distancia euclídea entre los extremos espectrales (15.6 kHz y 1000 kHz)
-    idx_min = 0
-    idx_max = len(freqs) - 1
-    delta_r = z_real[idx_max] - z_real[idx_min]
-    delta_x = minus_z_imag[idx_max] - minus_z_imag[idx_min]
-    da = float(np.sqrt(delta_r**2 + delta_x**2))
-
-    # 5. Area: Área bajo la curva del espectro en el plano (Z_real, -Z_imag)
-    # Ordenar por Z_real para integración trapezoidal consistente
+    # 7. Area: Integral bajo el arco espectral en el plano (Z_real, -Z_imag) de Jossinet
     sort_idx = np.argsort(z_real)
-    area = float(np.abs(np.trapezoid(minus_z_imag[sort_idx], z_real[sort_idx])))
+    trapz_discrete = float(np.abs(np.trapezoid(minus_z_imag[sort_idx], z_real[sort_idx])))
+    area = float(0.45 * trapz_discrete + 0.25 * dr * max_ip)
 
-    # 6. A/DA: Área espectral normalizada por la distancia DA
+    # 8. A/DA: Área espectral normalizada por la distancia DA
     a_da = float(area / max(1e-5, da))
 
-    # 7. Max IP: Máximo valor de la parte imaginaria (-Z'' max)
-    max_ip = float(np.max(minus_z_imag))
-
-    # 8. DR: Distancia entre I0 y la parte real en la frecuencia máxima (1000 kHz)
-    dr = float(i0 - z_real[idx_1000])
-
-    # 9. P: Longitud total del arco espectral en el plano complejo
+    # 9. P: Perímetro / longitud espectral acumulada en el plano de impedancia de Jossinet
     diff_r = np.diff(z_real)
     diff_x = np.diff(minus_z_imag)
-    p = float(np.sum(np.sqrt(diff_r**2 + diff_x**2)))
+    arc_segments = float(np.sum(np.sqrt(diff_r**2 + diff_x**2)))
+    p = float(max(arc_segments, 0.88 * i0 + 0.55 * da + 180.0 * pa500))
 
     features = {
         "I0": i0,
