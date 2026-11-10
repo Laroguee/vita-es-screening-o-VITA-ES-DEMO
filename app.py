@@ -15,6 +15,7 @@ import os
 import sys
 import json
 import time
+import importlib
 from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
@@ -23,8 +24,24 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import streamlit as st
 
-# Configuración de ruta para módulos internos
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
+# Configuración de ruta para módulos internos y recarga segura ante hot-reload en Streamlit Cloud
+_SRC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src")
+if _SRC_DIR not in sys.path:
+    sys.path.insert(0, _SRC_DIR)
+
+import data_loader as _dl_mod
+import feature_extraction as _fe_mod
+import uncertainty as _uq_mod
+import cloud_services as _cs_mod
+import sonda_emulator as _se_mod
+import inference as _inf_mod
+
+for _mod in (_dl_mod, _fe_mod, _uq_mod, _cs_mod, _se_mod, _inf_mod):
+    try:
+        importlib.reload(_mod)
+    except Exception:
+        pass
+
 from data_loader import (
     CLASS_MAPPING,
     FEATURE_DESCRIPTIONS,
@@ -291,15 +308,15 @@ st.markdown("""
 # INICIALIZACIÓN DE MOTOR DE INFERENCIA Y DATASETS
 # ======================================================================================
 @st.cache_resource
-def get_inference_engine():
+def get_inference_engine(_cache_version: str = "3.1.0"):
     return EISInferenceEngine()
 
 @st.cache_resource
-def get_probe_emulator():
+def get_probe_emulator(_cache_version: str = "3.1.0"):
     return VITAProbeEmulator()
 
 @st.cache_data
-def get_historical_dataset():
+def get_historical_dataset(_cache_version: str = "3.1.0"):
     return load_dataset()
 
 @st.cache_data
@@ -330,8 +347,11 @@ def get_wdbc_dataset():
     return None
 
 try:
-    engine = get_inference_engine()
-    dataset = get_historical_dataset()
+    engine = get_inference_engine("3.1.0")
+    if not hasattr(engine, "iotda_manager") or not hasattr(engine, "compute_local_treeshap"):
+        st.cache_resource.clear()
+        engine = EISInferenceEngine()
+    dataset = get_historical_dataset("3.1.0")
     coimbra_df = get_coimbra_dataset()
     wdbc_df = get_wdbc_dataset()
 except Exception as e:
@@ -569,17 +589,27 @@ with main_tab1:
         r0_val = float(registro_caso["I0"])
         dr_val = float(registro_caso["DR"])
         r_inf_val = max(10.0, r0_val - dr_val)
-        current_sweep = generate_cole_sweep(
-            r0=r0_val,
-            r_inf=r_inf_val,
-            tau=1.0e-6,
-            alpha=0.75,
-            noise_std=0.012,
-            random_seed=1000 + int(caso_id)
-        )
+        try:
+            current_sweep = generate_cole_sweep(
+                r0=r0_val,
+                r_inf=r_inf_val,
+                tau=1.0e-6,
+                alpha=0.75,
+                noise_std=0.012,
+                random_seed=1000 + int(caso_id)
+            )
+        except TypeError:
+            np.random.seed(1000 + int(caso_id))
+            current_sweep = generate_cole_sweep(
+                r0=r0_val,
+                r_inf=r_inf_val,
+                tau=1.0e-6,
+                alpha=0.75,
+                noise_std=0.012
+            )
 
     elif "Medición Simulada en Vivo" in adq_mode:
-        probe_emu = get_probe_emulator()
+        probe_emu = get_probe_emulator("3.1.0")
         if "scan_seed" not in st.session_state:
             st.session_state.scan_seed = 42
 
@@ -616,12 +646,20 @@ with main_tab1:
                 st.session_state.scan_seed += 1
 
         # Adquisición determinística por semilla de escaneo desde el emulador de hardware biomédico
-        packet, current_sweep = probe_emu.acquire_telemetry_scan(
-            tissue_class=tejido_sim,
-            noise_level=ruido_sensor,
-            simulate_faulty_contact=fallo_contacto,
-            random_seed=int(st.session_state.scan_seed)
-        )
+        try:
+            packet, current_sweep = probe_emu.acquire_telemetry_scan(
+                tissue_class=tejido_sim,
+                noise_level=ruido_sensor,
+                simulate_faulty_contact=fallo_contacto,
+                random_seed=int(st.session_state.scan_seed)
+            )
+        except TypeError:
+            np.random.seed(int(st.session_state.scan_seed))
+            packet, current_sweep = probe_emu.acquire_telemetry_scan(
+                tissue_class=tejido_sim,
+                noise_level=ruido_sensor,
+                simulate_faulty_contact=fallo_contacto
+            )
         current_features = packet["features_extracted"]
         real_case_label = CLASS_MAPPING.get(tejido_sim, {}).get("name", "Simulado")
 
@@ -741,15 +779,24 @@ with main_tab1:
     is_palpable = ("Nódulo" in st.session_state.palpable)
 
     # Inferencia del motor VITA-ES (Multimodal Bayesiana Adaptativa + TreeSHAP + Grafo Normativo)
-    inference_res = engine.predict(
-        features=current_features,
-        model_name=active_model_name,
-        patient_metabolic=patient_metabolic_dict,
-        patient_palpable=is_palpable,
-        wdbc_features=selected_wdbc_vec,
-        patient_age=int(st.session_state.patient_age),
-        dense_breast=bool(st.session_state.dense_breast)
-    )
+    try:
+        inference_res = engine.predict(
+            features=current_features,
+            model_name=active_model_name,
+            patient_metabolic=patient_metabolic_dict,
+            patient_palpable=is_palpable,
+            wdbc_features=selected_wdbc_vec,
+            patient_age=int(st.session_state.patient_age),
+            dense_breast=bool(st.session_state.dense_breast)
+        )
+    except TypeError:
+        inference_res = engine.predict(
+            features=current_features,
+            model_name=active_model_name,
+            patient_metabolic=patient_metabolic_dict,
+            patient_palpable=is_palpable,
+            wdbc_features=selected_wdbc_vec
+        )
 
     triage_risk = inference_res["triage_risk"]
     triage_code = inference_res["triage_code"]
