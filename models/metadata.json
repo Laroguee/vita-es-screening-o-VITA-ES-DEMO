@@ -3,7 +3,7 @@
   "version": "2.5.0",
   "framework": "scikit-learn / XGBoost / Keras / ONNX / Huawei ModelArts compatible",
   "algorithm": "Multi-Model Zoo (Champion: XGBoost / Baseline: Balanced Random Forest)",
-  "training_timestamp": "2026-11-07T03:49:55.927328+00:00",
+  "training_timestamp": "2026-11-10T01:00:57.994807+00:00",
   "num_samples": 106,
   "features": [
     "I0",

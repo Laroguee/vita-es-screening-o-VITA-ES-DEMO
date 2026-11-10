@@ -213,7 +213,8 @@ def generate_cole_sweep(
     tau: float = 1.0e-6,
     alpha: float = 0.75,
     frequencies_khz: Optional[List[float]] = None,
-    noise_std: float = 0.015
+    noise_std: float = 0.015,
+    random_seed: Optional[int] = 42
 ) -> pd.DataFrame:
     """
     Genera el barrido espectral multifrecuencia completo Z(f) resolviendo la ecuación de Cole-Cole:
@@ -225,6 +226,7 @@ def generate_cole_sweep(
         R_inf = Resistencia intra+extracelular a frecuencia infinita
         tau = Tiempo de relajación dipolar de membrana
         alpha = Parámetro de dispersión de Cole (0 < alpha <= 1)
+        random_seed = Semilla determinista para reproducibilidad clínica del barrido
     """
     freqs_khz = frequencies_khz or STANDARD_FREQUENCIES_KHZ
     f_hz = np.array(freqs_khz) * 1e3
@@ -236,8 +238,9 @@ def generate_cole_sweep(
 
     # Agregar ruido de medición gaussiano realista propio de la sonda de prueba
     if noise_std > 0:
-        noise_re = np.random.normal(0, noise_std * np.abs(np.real(z_complex)))
-        noise_im = np.random.normal(0, noise_std * np.abs(np.imag(z_complex)))
+        rng = np.random.default_rng(random_seed) if random_seed is not None else np.random.default_rng()
+        noise_re = rng.normal(0, noise_std * np.abs(np.real(z_complex)))
+        noise_im = rng.normal(0, noise_std * np.abs(np.imag(z_complex)))
         z_complex = (np.real(z_complex) + noise_re) + 1j * (np.imag(z_complex) + noise_im)
 
     z_real = np.real(z_complex)

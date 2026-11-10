@@ -168,17 +168,19 @@ python src/models_zoo.py
 ```
 *Resultados verificables de Validación Cruzada Estratificada ($k=5$, $N=106$ casos reales de Jossinet):*
 
-| Modelo del Model Zoo | Exactitud Histológica (6 Clases) | Exactitud Triaje BI-RADS (3 Niveles) | Sensibilidad Carcinoma (`car`) | Especificidad Carcinoma (`car`) | Latencia Media |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **XGBoost (Campeón)** | **71.70%** | **83.96%** | **90.48%** | **96.47%** | **0.21 ms** |
-| **Ensamble Multimodelo** | 70.75% | 82.08% | **90.48%** | 95.29% | 5.75 ms |
-| **1D CNN (VITA-Net)** | 68.87% | 78.30% | 80.95% | 95.29% | 44.50 ms |
-| **Balanced Random Forest** | 67.92% | 80.19% | 85.71% | 94.12% | 5.20 ms |
-| **SVM (Kernel RBF)** | 60.38% | 73.58% | 85.71% | 95.29% | 0.31 ms |
+| Modelo del Model Zoo | Exactitud Histológica (6 Clases) | Exactitud Triaje BI-RADS (3 Niveles) | Sensibilidad Carcinoma (`car`) | Especificidad Carcinoma (`car`) | ROC-AUC Carcinoma | Latencia Media |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **XGBoost (Campeón)** | **71.70%** | **83.96%** | **90.48%** | **96.47%** | **0.9591** | **0.21 ms** |
+| **Ensamble Multimodelo** | 70.75% | 82.08% | **90.48%** | 95.29% | **0.9731** | 5.75 ms |
+| **1D CNN (VITA-Net)** | 68.87% | 78.30% | 80.95% | 95.29% | **0.9630** | 44.50 ms |
+| **Balanced Random Forest** | 67.92% | 80.19% | 85.71% | 94.12% | **0.9737** | 5.20 ms |
+| **SVM (Kernel RBF)** | 60.38% | 73.58% | 85.71% | 95.29% | **0.9754** | 0.31 ms |
 
-*Modelos Auxiliares de Fusión Multimodal ($k=5$ Stratified CV):*
+*Modelos Auxiliares de Fusión Multimodal ($k=5$ Stratified CV) y Explicabilidad:*
 * **Coimbra BCCD (`dataR2.csv`, $N=116$):** Exactitud CV = **72.41%** | Sensibilidad = **75.00%**
 * **Wisconsin WDBC (`wdbc.data`, $N=569$):** Exactitud CV = **97.36%** | Sensibilidad = **94.34%**
+* **Explicabilidad Clínica (XAI):** Atribución local exacta **TreeSHAP** (`pred_contribs=True`) en tiempo real por paciente + Grafo de Conocimiento Normativo (**SRS El Salvador RTS 11.03.04:23 / MINSAL / ACR BI-RADS**).
+* **Optimización Edge Huawei MindSpore / INT8:** Definición nativa `MindSporeVitaNet1D (mindspore.nn.Cell)` en `modelarts_deploy/mindspore_vitanet.py` y pesos cuantizados `vitanet_int8_weights.npz` (compresión **4.0x**).
 
 ### 5. Iniciar la Aplicación Streamlit
 ```bash

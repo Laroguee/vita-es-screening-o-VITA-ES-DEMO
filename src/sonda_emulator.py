@@ -75,47 +75,51 @@ class VITAProbeEmulator:
         self,
         tissue_class: str = "car",
         noise_level: float = 0.015,
-        simulate_faulty_contact: bool = False
-    ) -> Dict[str, Any]:
+        simulate_faulty_contact: bool = False,
+        random_seed: Optional[int] = 42
+    ) -> Tuple[Dict[str, Any], pd.DataFrame]:
         """
-        Ejecuta un ciclo de escaneo bioeléctrico completo en la sonda:
+        Ejecuta un ciclo de escaneo bioeléctrico completo en la sonda (Gemelo Digital Cole-Cole):
         1. Modula la resistencia tisular según la patología emulada.
-        2. Inyecta variaciones estocásticas de impedancia de contacto piel-electrodo.
+        2. Inyecta variaciones estocásticas controladas de impedancia de contacto piel-electrodo.
         3. Evalúa el Signal Quality Index (SQI).
-        4. Empaqueta la telemetría en JSON y genera la trama BLE hexadecimal.
+        4. Empaqueta la telemetría en JSON compatible con Huawei Cloud IoTDA y genera la trama BLE.
         """
+        rng = np.random.default_rng(random_seed) if random_seed is not None else np.random.default_rng()
+
         # Desgaste gradual de batería por escaneo
-        self.battery_pct = max(5.0, self.battery_pct - np.random.uniform(0.05, 0.15))
+        self.battery_pct = max(5.0, 94.2 - float(rng.uniform(0.05, 0.45)))
         # Temperatura del cabezal térmico del sensor
-        self.temperature_c = round(36.5 + np.random.normal(0, 0.2), 1)
+        self.temperature_c = round(36.5 + float(rng.normal(0, 0.15)), 1)
 
         info = CLASS_MAPPING.get(tissue_class, CLASS_MAPPING["car"])
         params = info["cole_params"]
 
         if simulate_faulty_contact:
             # Simular electrodo desprendido o piel seca (R0 > 6000 Ohm)
-            r0 = 6800.0 + np.random.uniform(-300, 500)
+            r0 = 6800.0 + float(rng.uniform(-300, 500))
             r_inf = 1200.0
             tau = 5.0e-6
             alpha = 0.40
             noise_std = 0.12
             electrode_status = "FAULTY_CONTACT_HIGH_IMPEDANCE"
         else:
-            var = 1.0 + np.random.uniform(-0.05, 0.05)
+            var = 1.0 + float(rng.uniform(-0.04, 0.04))
             r0 = params["R0"] * var
             r_inf = params["Rinf"] * var
-            tau = params["tau"] * (1.0 + np.random.uniform(-0.04, 0.04))
-            alpha = min(0.95, max(0.60, params["alpha"] * (1.0 + np.random.uniform(-0.02, 0.02))))
+            tau = params["tau"] * (1.0 + float(rng.uniform(-0.03, 0.03)))
+            alpha = min(0.95, max(0.60, params["alpha"] * (1.0 + float(rng.uniform(-0.02, 0.02)))))
             noise_std = noise_level
             electrode_status = "OPTIMAL_DIFFERENTIAL_CONTACT"
 
-        # Generar barrido espectral multifrecuencia
+        # Generar barrido espectral multifrecuencia determinístico por semilla de escaneo
         sweep_df = generate_cole_sweep(
             r0=r0,
             r_inf=r_inf,
             tau=tau,
             alpha=alpha,
-            noise_std=noise_std
+            noise_std=noise_std,
+            random_seed=random_seed
         )
 
         # Evaluar SQI

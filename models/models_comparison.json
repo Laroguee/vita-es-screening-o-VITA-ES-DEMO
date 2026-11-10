@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-07T03:49:55.927328+00:00",
+  "timestamp": "2026-11-10T01:00:57.994807+00:00",
   "num_samples": 106,
   "classes": [
     "adi",
@@ -123,6 +123,17 @@
     "DR": 0.08100416378929086,
     "P": 0.15683931628132547
   },
+  "treeshap_global_importances": {
+    "I0": 0.0935,
+    "PA500": 0.6042,
+    "HFS": 0.0304,
+    "DA": 0.0367,
+    "Area": 0.0504,
+    "A/DA": 0.0716,
+    "Max IP": 0.0176,
+    "DR": 0.0727,
+    "P": 0.023
+  },
   "models": {
     "Random Forest": {
       "accuracy": 67.92,
@@ -131,11 +142,60 @@
       "f1_macro": 0.6611,
       "precision_macro": 0.6707,
       "recall_macro": 0.6587,
+      "roc_auc_ovr_macro": 0.9188,
+      "carcinoma_roc_auc": 0.9737,
+      "carcinoma_pr_auc": 0.9149,
+      "carcinoma_roc_curve": {
+        "fpr": [
+          0.0,
+          0.0,
+          0.0,
+          0.0118,
+          0.0118,
+          0.0235,
+          0.0235,
+          0.0353,
+          0.0353,
+          0.0588,
+          0.0588,
+          0.2706,
+          0.2706,
+          0.3529,
+          0.3765,
+          0.4118,
+          0.5059,
+          0.6118,
+          0.6353,
+          1.0
+        ],
+        "tpr": [
+          0.0,
+          0.0476,
+          0.4286,
+          0.4286,
+          0.7143,
+          0.7143,
+          0.7619,
+          0.7619,
+          0.8571,
+          0.8571,
+          0.9524,
+          0.9524,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
       "carcinoma_sensitivity": 85.71,
       "carcinoma_specificity": 94.12,
       "carcinoma_precision": 78.26,
       "carcinoma_f1": 0.8182,
-      "avg_latency_ms": 1.02,
+      "avg_latency_ms": 2.87,
       "confusion_matrix": [
         [
           20,
@@ -195,11 +255,52 @@
       "f1_macro": 0.5291,
       "precision_macro": 0.5178,
       "recall_macro": 0.5663,
+      "roc_auc_ovr_macro": 0.8824,
+      "carcinoma_roc_auc": 0.9754,
+      "carcinoma_pr_auc": 0.9156,
+      "carcinoma_roc_curve": {
+        "fpr": [
+          0.0,
+          0.0,
+          0.0,
+          0.0118,
+          0.0118,
+          0.0353,
+          0.0353,
+          0.0471,
+          0.0471,
+          0.0588,
+          0.0588,
+          0.0824,
+          0.0824,
+          0.2118,
+          0.2118,
+          1.0
+        ],
+        "tpr": [
+          0.0,
+          0.0476,
+          0.4286,
+          0.4286,
+          0.7619,
+          0.7619,
+          0.8095,
+          0.8095,
+          0.8571,
+          0.8571,
+          0.9048,
+          0.9048,
+          0.9524,
+          0.9524,
+          1.0,
+          1.0
+        ]
+      },
       "carcinoma_sensitivity": 85.71,
       "carcinoma_specificity": 95.29,
       "carcinoma_precision": 81.82,
       "carcinoma_f1": 0.8372,
-      "avg_latency_ms": 0.04,
+      "avg_latency_ms": 0.11,
       "confusion_matrix": [
         [
           21,
@@ -259,11 +360,48 @@
       "f1_macro": 0.7004,
       "precision_macro": 0.7041,
       "recall_macro": 0.7002,
+      "roc_auc_ovr_macro": 0.9126,
+      "carcinoma_roc_auc": 0.9591,
+      "carcinoma_pr_auc": 0.9098,
+      "carcinoma_roc_curve": {
+        "fpr": [
+          0.0,
+          0.0,
+          0.0,
+          0.0118,
+          0.0118,
+          0.0235,
+          0.0235,
+          0.0353,
+          0.0353,
+          0.3176,
+          0.3176,
+          0.3882,
+          0.3882,
+          1.0
+        ],
+        "tpr": [
+          0.0,
+          0.0476,
+          0.5714,
+          0.5714,
+          0.6667,
+          0.6667,
+          0.8571,
+          0.8571,
+          0.9048,
+          0.9048,
+          0.9524,
+          0.9524,
+          1.0,
+          1.0
+        ]
+      },
       "carcinoma_sensitivity": 90.48,
       "carcinoma_specificity": 96.47,
       "carcinoma_precision": 86.36,
       "carcinoma_f1": 0.8837,
-      "avg_latency_ms": 0.07,
+      "avg_latency_ms": 0.18,
       "confusion_matrix": [
         [
           21,
@@ -323,11 +461,48 @@
       "f1_macro": 0.6793,
       "precision_macro": 0.6821,
       "recall_macro": 0.6822,
+      "roc_auc_ovr_macro": 0.9044,
+      "carcinoma_roc_auc": 0.963,
+      "carcinoma_pr_auc": 0.8875,
+      "carcinoma_roc_curve": {
+        "fpr": [
+          0.0,
+          0.0,
+          0.0,
+          0.0118,
+          0.0118,
+          0.0235,
+          0.0235,
+          0.0588,
+          0.0588,
+          0.2,
+          0.2,
+          0.2353,
+          0.2353,
+          1.0
+        ],
+        "tpr": [
+          0.0,
+          0.0952,
+          0.5238,
+          0.5238,
+          0.619,
+          0.619,
+          0.6667,
+          0.6667,
+          0.9048,
+          0.9048,
+          0.9524,
+          0.9524,
+          1.0,
+          1.0
+        ]
+      },
       "carcinoma_sensitivity": 80.95,
       "carcinoma_specificity": 95.29,
       "carcinoma_precision": 80.95,
       "carcinoma_f1": 0.8095,
-      "avg_latency_ms": 19.92,
+      "avg_latency_ms": 25.06,
       "confusion_matrix": [
         [
           19,
@@ -387,11 +562,48 @@
       "f1_macro": 0.6901,
       "precision_macro": 0.6979,
       "recall_macro": 0.6871,
+      "roc_auc_ovr_macro": 0.9236,
+      "carcinoma_roc_auc": 0.9731,
+      "carcinoma_pr_auc": 0.9143,
+      "carcinoma_roc_curve": {
+        "fpr": [
+          0.0,
+          0.0,
+          0.0,
+          0.0118,
+          0.0118,
+          0.0235,
+          0.0235,
+          0.0353,
+          0.0353,
+          0.0941,
+          0.0941,
+          0.2706,
+          0.2706,
+          1.0
+        ],
+        "tpr": [
+          0.0,
+          0.0476,
+          0.4286,
+          0.4286,
+          0.7143,
+          0.7143,
+          0.7619,
+          0.7619,
+          0.9048,
+          0.9048,
+          0.9524,
+          0.9524,
+          1.0,
+          1.0
+        ]
+      },
       "carcinoma_sensitivity": 90.48,
       "carcinoma_specificity": 95.29,
       "carcinoma_precision": 82.61,
       "carcinoma_f1": 0.8636,
-      "avg_latency_ms": 1.13,
+      "avg_latency_ms": 3.16,
       "confusion_matrix": [
         [
           21,
@@ -589,10 +801,17 @@
       "status": "ready"
     }
   },
+  "quantization_benchmark": {
+    "model": "1D CNN (VITA-Net)",
+    "fp32_buffer_bytes": 48920,
+    "int8_buffer_bytes": 12230,
+    "compression_ratio": "4.0x",
+    "target_runtime": "Huawei MindSpore Lite / Ascend 310 (Orange Pi AIpro) & ONNX INT8"
+  },
   "best_carcinoma_sensitivity_model": "XGBoost",
   "huawei_hardware_target": {
-    "edge_accelerator": "ONNX Runtime / Huawei Ascend 310 (MindSpore Lite)",
+    "edge_accelerator": "ONNX Runtime / Huawei Ascend 310 (MindSpore Lite INT8)",
     "cloud_trainer": "Huawei Cloud ModelArts (Ascend 910 Pro NPU)",
-    "recommended_inference_mode": "Edge-First con sincronización transaccional a Huawei Cloud RDS & DCS"
+    "recommended_inference_mode": "Edge-First con sincronización transaccional a Huawei Cloud IoTDA, RDS & DCS"
   }
 }

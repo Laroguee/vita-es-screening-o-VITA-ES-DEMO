@@ -29,7 +29,11 @@ desktop.ini
 .vscode/
 .idea/
 
-# Local working documents and blank competition templates
-StartupSTEM2026*.pdf
-*Area - Team Name.docx
+# Local working documents, competition forms, and reference catalogs (kept local only)
+*.pdf
+*.docx
 ~$*.docx
+Cat*logo*.md
+GUION_VIDEO_DEMO.md
+ESTRUCTURA_DIAPOSITIVAS_PPT.md
+reporte_vita_es.tex
