@@ -29,7 +29,7 @@ CLASS_MAPPING = {
         "color": "#F59E0B",
         "birads_category": "BI-RADS 3 (Probablemente Benigno)",
         "clinical_action": "Evaluación por Ultrasonido mamario complementario y seguimiento clínico en 3 a 6 meses.",
-        "cole_params": {"R0": 245.0, "Rinf": 140.0, "tau": 6.0e-7, "alpha": 0.62}
+        "cole_params": {"R0": 245.0, "Rinf": 152.0, "tau": 4.2e-7, "alpha": 0.62}
     },
     "mas": {
         "name": "Mastopatía",
@@ -39,7 +39,7 @@ CLASS_MAPPING = {
         "color": "#F59E0B",
         "birads_category": "BI-RADS 3 (Probablemente Benigno)",
         "clinical_action": "Monitoreo clínico semestral y control ecográfico; correlación con ciclo hormonal.",
-        "cole_params": {"R0": 285.0, "Rinf": 160.0, "tau": 5.5e-7, "alpha": 0.72}
+        "cole_params": {"R0": 290.0, "Rinf": 151.0, "tau": 2.5e-6, "alpha": 0.75}
     },
     "gla": {
         "name": "Glandular",

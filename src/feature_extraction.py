@@ -237,17 +237,32 @@ def extract_features_from_sweep(sweep_df: pd.DataFrame) -> Dict[str, float]:
     else:
         i0 = i0_extrap
 
-    # 2. PA500: Ángulo de fase a 500 kHz
+    # 2. PA500: Ángulo de fase a 500 kHz (filtrado espectral de 3 puntos ante ruido de contacto)
     idx_500 = int(np.argmin(np.abs(freqs - 500.0)))
-    pa500 = float(phase_rad[idx_500])
+    if 0 < idx_500 < len(phase_rad) - 1:
+        pa500 = float(0.18 * phase_rad[idx_500 - 1] + 0.64 * phase_rad[idx_500] + 0.18 * phase_rad[idx_500 + 1])
+    else:
+        pa500 = float(phase_rad[idx_500])
 
-    # 3. Max IP: Máximo valor de la parte imaginaria (-Z'' max) en el pico de dispersión
+    # 3. Max IP y 4. DR: Componente reactiva máxima (-Z'' max) y distancia real hasta el pico (Jossinet 1996)
+    # Estabilización frente a ruido de alta frecuencia mediante el vértice del ajuste circular Cole-Cole
     idx_peak = int(np.argmax(minus_z_imag))
-    max_ip = float(minus_z_imag[idx_peak])
+    raw_max_ip = float(minus_z_imag[idx_peak])
+    raw_dr = float(max(5.0, i0 - z_real[idx_peak]))
 
-    # 4. DR: Distancia real entre I0 y la componente real en el pico espectral (Jossinet 1996)
+    xc_fit = cole_fit.get("xc", np.nan)
+    yc_fit = cole_fit.get("yc", np.nan)
+    r_fit = cole_fit.get("radius", np.nan)
+    if not np.isnan(xc_fit) and not np.isnan(r_fit) and r_fit > 5.0:
+        fit_max_ip = float(max(5.0, yc_fit + r_fit))
+        fit_dr = float(np.clip(i0 - xc_fit, 5.0, max(10.0, i0 - np.min(z_real))))
+        max_ip = float(0.65 * raw_max_ip + 0.35 * fit_max_ip)
+        dr = float(0.60 * raw_dr + 0.40 * fit_dr)
+    else:
+        max_ip = raw_max_ip
+        dr = raw_dr
+
     idx_1000 = int(np.argmin(np.abs(freqs - 1000.0)))
-    dr = float(max(5.0, i0 - z_real[idx_peak]))
 
     # 5. DA: Distancia euclídea desde (I0, 0) hasta el pico espectral (sqrt(DR^2 + Max_IP^2))
     da = float(np.sqrt(dr**2 + max_ip**2))

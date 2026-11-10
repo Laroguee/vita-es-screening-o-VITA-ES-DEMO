@@ -308,15 +308,15 @@ st.markdown("""
 # INICIALIZACIÓN DE MOTOR DE INFERENCIA Y DATASETS
 # ======================================================================================
 @st.cache_resource
-def get_inference_engine(_cache_version: str = "3.1.0"):
+def get_inference_engine(_cache_version: str = "3.2.0"):
     return EISInferenceEngine()
 
 @st.cache_resource
-def get_probe_emulator(_cache_version: str = "3.1.0"):
+def get_probe_emulator(_cache_version: str = "3.2.0"):
     return VITAProbeEmulator()
 
 @st.cache_data
-def get_historical_dataset(_cache_version: str = "3.1.0"):
+def get_historical_dataset(_cache_version: str = "3.2.0"):
     return load_dataset()
 
 @st.cache_data
@@ -347,11 +347,11 @@ def get_wdbc_dataset():
     return None
 
 try:
-    engine = get_inference_engine("3.1.0")
+    engine = get_inference_engine("3.2.0")
     if not hasattr(engine, "iotda_manager") or not hasattr(engine, "compute_local_treeshap"):
         st.cache_resource.clear()
         engine = EISInferenceEngine()
-    dataset = get_historical_dataset("3.1.0")
+    dataset = get_historical_dataset("3.2.0")
     coimbra_df = get_coimbra_dataset()
     wdbc_df = get_wdbc_dataset()
 except Exception as e:
@@ -787,7 +787,8 @@ with main_tab1:
             patient_palpable=is_palpable,
             wdbc_features=selected_wdbc_vec,
             patient_age=int(st.session_state.patient_age),
-            dense_breast=bool(st.session_state.dense_breast)
+            dense_breast=bool(st.session_state.dense_breast),
+            snr_db=float(signal_qc.get("snr_db", 45.0))
         )
     except TypeError:
         inference_res = engine.predict(

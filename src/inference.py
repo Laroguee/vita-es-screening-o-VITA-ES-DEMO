@@ -222,27 +222,24 @@ class EISInferenceEngine:
         """
         Ejecuta el clasificador real entrenado sobre el dataset Wisconsin WDBC (model_wdbc.pkl):
         - Si se proporciona un vector citológico de 30 características de un caso FNA, lo evalúa directamente.
-        - Si solo se cuenta con la exploración física (nódulo palpable vs. asintomática), evalúa el modelo
-          sobre los perfiles empíricos derivados de la cohorte WDBC (N=569).
+        - Si no se ha vinculado punción FNA previa, utiliza un prior clínico moderado según palpación
+          sin simular una citología maligna inexistente.
         """
         if self.model_wdbc is not None and self.scaler_wdbc is not None:
             if wdbc_features is not None and len(wdbc_features) == 30:
                 vec = np.array([wdbc_features], dtype=np.float64)
-                source = "WDBC FNA Cytology Model (30 variables)"
-            elif patient_palpable and self.wdbc_profiles.get("palpable_suspicious_profile"):
-                vec = np.array([self.wdbc_profiles["palpable_suspicious_profile"]], dtype=np.float64)
-                source = "WDBC Model (Perfil Nódulo Palpable)"
-            elif self.wdbc_profiles.get("benign_centroid"):
+                scaled = self.scaler_wdbc.transform(vec)
+                prob_malignant = float(self.model_wdbc.predict_proba(scaled)[0, 1])
+                return prob_malignant, "WDBC FNA Cytology Model (30 variables)"
+            elif not patient_palpable and self.wdbc_profiles.get("benign_centroid"):
                 vec = np.array([self.wdbc_profiles["benign_centroid"]], dtype=np.float64)
-                source = "WDBC Model (Perfil Basal Asintomático)"
+                scaled = self.scaler_wdbc.transform(vec)
+                prob_malignant = float(self.model_wdbc.predict_proba(scaled)[0, 1])
+                return prob_malignant, "WDBC Model (Perfil Basal Asintomático)"
             else:
-                return (0.55 if patient_palpable else 0.08), "Prior Clínico"
+                return 0.24, "Examen Físico (Nódulo Palpable sin FNA previa)"
 
-            scaled = self.scaler_wdbc.transform(vec)
-            prob_malignant = float(self.model_wdbc.predict_proba(scaled)[0, 1])
-            return prob_malignant, source
-
-        return (0.55 if patient_palpable else 0.08), "Prior Clínico"
+        return (0.24 if patient_palpable else 0.08), "Prior Clínico"
 
     def compute_local_treeshap(
         self,
@@ -348,7 +345,8 @@ class EISInferenceEngine:
         patient_palpable: bool = False,
         wdbc_features: Optional[Union[List[float], np.ndarray]] = None,
         patient_age: int = 45,
-        dense_breast: bool = False
+        dense_breast: bool = False,
+        snr_db: Optional[float] = None
     ) -> Dict[str, Any]:
         """
         Ejecuta la inferencia diagnóstica completa con medición de latencia real:
@@ -409,18 +407,30 @@ class EISInferenceEngine:
         aux_combined_malignancy = 0.45 * metabolic_risk_prob + 0.55 * morphological_risk_prob
         has_explicit_fna = (wdbc_features is not None and len(wdbc_features) == 30)
 
-        # Si existe evidencia citológica FNA o alteración metabólica, modulamos la probabilidad posterior de carcinoma
+        # Si existe evidencia citológica FNA o alteración metabólica severa, modulamos la probabilidad posterior de carcinoma
         if has_explicit_fna:
-            # Con punción citológica FNA real vinculada (97.36% exactitud WDBC), su peso bayesiano es alto
-            target_car_post = float(np.clip(
-                0.45 * eis_car_prob + 0.15 * metabolic_risk_prob + 0.40 * morphological_risk_prob,
-                0.0, 0.99
-            ))
+            if morphological_risk_prob >= 0.55:
+                # Punción citológica FNA maligna/sospechosa vinculada (97.36% exactitud WDBC)
+                target_car_post = float(np.clip(
+                    0.45 * eis_car_prob + 0.15 * metabolic_risk_prob + 0.40 * morphological_risk_prob,
+                    0.0, 0.99
+                ))
+            else:
+                # Punción citológica FNA benigna vinculada: atenúa falsos positivos
+                target_car_post = float(np.clip(
+                    0.82 * eis_car_prob + 0.10 * metabolic_risk_prob + 0.08 * morphological_risk_prob,
+                    0.0, 0.99
+                ))
         else:
-            # Sin FNA previa, modulación bayesiana suave por perfil metabólico y examen físico
-            likelihood_gain = np.exp(1.15 * (metabolic_risk_prob - 0.35) + 0.85 * (morphological_risk_prob - 0.25))
-            boosted_car = eis_car_prob * likelihood_gain + max(0.0, 0.18 * (aux_combined_malignancy - 0.42))
-            target_car_post = float(np.clip(boosted_car, 0.0, 0.99))
+            # Sin FNA previa: si el perfil metabólico es basal (< 0.65), preservar la especificidad primaria de EIS
+            if metabolic_risk_prob >= 0.68:
+                likelihood_gain = np.exp(0.95 * (metabolic_risk_prob - 0.50))
+                boosted_car = eis_car_prob * likelihood_gain + 0.22 * (metabolic_risk_prob - 0.60)
+                target_car_post = float(np.clip(boosted_car, 0.0, 0.99))
+            else:
+                # Modulación suave que respeta el diagnóstico histológico primario de la bioimpedancia
+                likelihood_gain = np.exp(0.35 * (metabolic_risk_prob - 0.45) + 0.20 * (morphological_risk_prob - 0.22))
+                target_car_post = float(np.clip(eis_car_prob * likelihood_gain, 0.0, 0.99))
 
         # Ajustar el vector posterior de 6 clases manteniendo suma = 1.0
         other_sum = float(np.sum(posterior_probs) - posterior_probs[car_idx])
@@ -434,12 +444,22 @@ class EISInferenceEngine:
         else:
             posterior_probs[car_idx] = target_car_post
 
-        # Si el riesgo auxiliar es intermedio y el tejido EIS era sano, incrementar levemente proliferación benigna
-        if 0.45 <= aux_combined_malignancy < 0.70 and eis_pred_class in ["adi", "con", "gla"]:
-            shift = min(0.12, 0.20 * (aux_combined_malignancy - 0.40))
+        # Si el riesgo metabólico es alto y el tejido EIS era sano, incrementar levemente proliferación benigna
+        if metabolic_risk_prob >= 0.65 and not has_explicit_fna and eis_pred_class in ["adi", "con", "gla"]:
+            shift = min(0.12, 0.25 * (metabolic_risk_prob - 0.55))
             posterior_probs[fad_idx] += shift * 0.6
             posterior_probs[mas_idx] += shift * 0.4
             posterior_probs /= np.sum(posterior_probs)
+
+        # Calibración de Incertidumbre Aleatórica dependiente de SNR (Contacto Piel-Electrodo)
+        # A menor SNR (< 42 dB, mayor ruido térmico/contacto), aumenta la temperatura espectral T > 1,
+        # reduciendo de forma realista la certeza diagnóstica conforme se degrada el contacto físico.
+        if snr_db is not None and snr_db < 42.0:
+            noise_deficit = max(0.0, 42.0 - float(snr_db))
+            temp_scale = 1.0 + (noise_deficit / 32.0) ** 1.15
+            log_p = np.log(np.clip(posterior_probs, 1e-6, 1.0)) / temp_scale
+            exp_p = np.exp(log_p - np.max(log_p))
+            posterior_probs = exp_p / np.sum(exp_p)
 
         prob_dict = {cls: float(posterior_probs[i]) for i, cls in enumerate(classes)}
         pred_idx = int(np.argmax(posterior_probs))
@@ -454,19 +474,26 @@ class EISInferenceEngine:
 
         # Score de Riesgo Oncológico Fusionado (Fused Malignancy Score)
         linear_fused = 0.70 * eis_car_prob + 0.15 * metabolic_risk_prob + 0.15 * morphological_risk_prob
-        fused_malignancy_risk = float(np.clip(max(linear_fused, car_post_prob), 0.0, 1.0))
+        if eis_pred_class == "car":
+            fused_malignancy_risk = float(np.clip(max(linear_fused, car_post_prob), 0.0, 1.0))
+        else:
+            fused_malignancy_risk = float(np.clip(car_post_prob if not has_explicit_fna else max(linear_fused, car_post_prob), 0.0, 1.0))
 
-        # Detectar si hubo escalamiento multimodal preventivo (ej. EIS benigno pero citología WDBC o Coimbra críticos)
+        # Detectar si hubo escalamiento multimodal preventivo (ej. EIS benigno pero citología WDBC FNA maligna o Coimbra crítico)
         multimodal_escalated = False
         escalation_reason = "Concordancia Primaria EIS"
-        if eis_pred_class != "car" and (fused_malignancy_risk >= 0.32 or pred_class == "car" or (has_explicit_fna and morphological_risk_prob >= 0.70)):
+        if eis_pred_class != "car" and (
+            (has_explicit_fna and morphological_risk_prob >= 0.65)
+            or (metabolic_risk_prob >= 0.72 and car_post_prob >= 0.32)
+            or pred_class == "car"
+        ):
             multimodal_escalated = True
             escalation_reason = (
                 f"Escalamiento Preventivo Multimodal: Evidencia Citológica/Metabólica Crítica "
                 f"(WDBC={morphological_risk_prob*100:.1f}%, Coimbra={metabolic_risk_prob*100:.1f}%)"
             )
             fused_malignancy_risk = max(fused_malignancy_risk, 0.36)
-        elif eis_pred_class in ["adi", "con", "gla"] and (metabolic_risk_prob >= 0.65 or morphological_risk_prob >= 0.55):
+        elif eis_pred_class in ["adi", "con", "gla"] and (metabolic_risk_prob >= 0.65 or (has_explicit_fna and morphological_risk_prob >= 0.45)):
             escalation_reason = (
                 f"Alerta Vigilancia Multimodal: Biomarcadores Sistémicos/Morfológicos Elevados "
                 f"(Coimbra={metabolic_risk_prob*100:.1f}%, WDBC={morphological_risk_prob*100:.1f}%)"
